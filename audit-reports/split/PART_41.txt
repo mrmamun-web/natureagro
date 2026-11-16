@@ -1,0 +1,95 @@
+﻿        $this->assertFalse($user->canAccessPanel($panel));
+    }
+}
+
+
+
+==========================================================================================
+SOURCE FILE: tests\TestCase.php
+==========================================================================================
+<?php
+
+namespace Tests;
+
+use Illuminate\Foundation\Testing\TestCase as BaseTestCase;
+
+abstract class TestCase extends BaseTestCase
+{
+    //
+}
+
+
+
+==========================================================================================
+SOURCE FILE: tests\Unit\ExampleTest.php
+==========================================================================================
+<?php
+
+namespace Tests\Unit;
+
+use PHPUnit\Framework\TestCase;
+
+class ExampleTest extends TestCase
+{
+    /**
+     * A basic test example.
+     */
+    public function test_that_true_is_true(): void
+    {
+        $this->assertTrue(true);
+    }
+}
+
+
+
+==========================================================================================
+SOURCE FILE: vite.config.js
+==========================================================================================
+import { defineConfig } from 'vite';
+import laravel from 'laravel-vite-plugin';
+import tailwindcss from '@tailwindcss/vite';
+
+export default defineConfig({
+    plugins: [
+        laravel({
+            input: ['resources/css/app.css', 'resources/js/app.js', 'resources/css/filament/admin/theme.css'],
+            refresh: true,
+        }),
+        tailwindcss(),
+    ],
+    server: {
+        watch: {
+            ignored: ['**/storage/framework/views/**'],
+        },
+    },
+});
+
+
+
+==========================================================================================
+ADMIN DASHBOARD FILE DISCOVERY
+==========================================================================================
+E:\4- Web Development Project\nature-agro\app\Filament\Pages\FarmSettings.php
+E:\4- Web Development Project\nature-agro\app\Filament\Resources\Poultries\PoultryResource.php
+E:\4- Web Development Project\nature-agro\app\Filament\Resources\Poultries\Pages\CreatePoultry.php
+E:\4- Web Development Project\nature-agro\app\Filament\Resources\Poultries\Pages\EditPoultry.php
+E:\4- Web Development Project\nature-agro\app\Filament\Resources\Poultries\Pages\ListPoultries.php
+E:\4- Web Development Project\nature-agro\app\Filament\Resources\Poultries\Pages\ViewPoultry.php
+E:\4- Web Development Project\nature-agro\app\Filament\Resources\Poultries\Schemas\PoultryForm.php
+E:\4- Web Development Project\nature-agro\app\Filament\Resources\Poultries\Schemas\PoultryInfolist.php
+E:\4- Web Development Project\nature-agro\app\Filament\Resources\Poultries\Tables\PoultriesTable.php
+E:\4- Web Development Project\nature-agro\app\Filament\Widgets\FarmOverviewWidget.php
+E:\4- Web Development Project\nature-agro\app\Providers\Filament\AdminPanelProvider.php
+
+
+==========================================================================================
+AUDIT COMPLETED
+==========================================================================================
+Audit Finished: 11/15/2026 22:24:47
+Source Files: 90
+Report: E:\4- Web Development Project\nature-agro\audit-reports\2026-11-15_22-24-35\NATURE_AGRO_FULL_AUDIT.txt
+
+NOTE:
+This audit did not intentionally modify application code,
+database records, migrations, or environment settings.
+

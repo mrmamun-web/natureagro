@@ -1,0 +1,358 @@
+﻿/*! Bundled license information:
+
+@kurkle/color/dist/color.esm.js:
+  (*!
+   * @kurkle/color v0.3.4
+   * https://github.com/kurkle/color#readme
+   * (c) 2024 Jukka Kurkela
+   * Released under the MIT License
+   *)
+
+chart.js/dist/chunks/helpers.dataset.js:
+chart.js/dist/chart.js:
+  (*!
+   * Chart.js v4.5.1
+   * https://www.chartjs.org
+   * (c) 2025 Chart.js Contributors
+   * Released under the MIT License
+   *)
+*/
+
+
+
+==========================================================================================
+SOURCE FILE: resources\css\app.css
+==========================================================================================
+@import 'tailwindcss';
+
+@source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
+@source '../../storage/framework/views/*.php';
+@source '../**/*.blade.php';
+@source '../**/*.js';
+
+@theme {
+    --font-sans: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
+        'Segoe UI Symbol', 'Noto Color Emoji';
+}
+
+
+
+==========================================================================================
+SOURCE FILE: resources\css\filament\admin\theme.css
+==========================================================================================
+@import '../../../../vendor/filament/filament/resources/css/theme.css';
+
+@source '../../../../app/Filament/**/*';
+@source '../../../../resources/views/filament/**/*';
+
+
+
+==========================================================================================
+SOURCE FILE: resources\js\app.js
+==========================================================================================
+import './bootstrap';
+
+
+
+==========================================================================================
+SOURCE FILE: resources\js\bootstrap.js
+==========================================================================================
+import axios from 'axios';
+window.axios = axios;
+
+window.axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
+
+
+
+==========================================================================================
+SOURCE FILE: resources\views\filament\pages\farm-settings.blade.php
+==========================================================================================
+<x-filament-panels::page>
+    {{ $this->form }}
+</x-filament-panels::page>
+
+
+
+==========================================================================================
+SOURCE FILE: resources\views\filament\widgets\farm-overview-widget.blade.php
+==========================================================================================
+
+<x-filament-widgets::widget>
+    <div class="space-y-6">
+
+        {{-- Farm Header --}}
+        <x-filament::section>
+            @if ($farmSetting)
+                <div class="flex flex-col gap-5 sm:flex-row sm:items-center">
+                    <div class="flex h-20 w-20 shrink-0 items-center justify-center overflow-hidden rounded-2xl bg-success-50 dark:bg-success-950">
+                        @if ($farmSetting->farm_logo)
+                            <img
+                                src="{{ asset('storage/' . $farmSetting->farm_logo) }}"
+                                alt="{{ $farmSetting->farm_name }}"
+                                class="h-full w-full object-cover"
+                            >
+                        @else
+                            <span class="text-2xl font-bold text-success-600">
+                                NA
+                            </span>
+                        @endif
+                    </div>
+
+                    <div class="min-w-0 flex-1">
+                        <h2 class="text-2xl font-bold text-gray-950 dark:text-white">
+                            {{ $farmSetting->farm_name }}
+                        </h2>
+
+                        <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">
+                            {{ $farmSetting->description ?: 'Welcome to your farm management dashboard.' }}
+                        </p>
+
+                        <div class="mt-3 flex flex-wrap gap-x-5 gap-y-2 text-sm text-gray-600 dark:text-gray-300">
+                            <span>
+                                <x-filament::icon icon="heroicon-o-user" class="inline h-4 w-4" />
+                                {{ $farmSetting->owner_name }}
+                            </span>
+
+                            @if ($farmSetting->phone_number)
+                                <span>
+                                    <x-filament::icon icon="heroicon-o-phone" class="inline h-4 w-4" />
+                                    {{ $farmSetting->phone_number }}
+                                </span>
+                            @endif
+
+                            <span>
+                                <x-filament::icon icon="heroicon-o-banknotes" class="inline h-4 w-4" />
+                                {{ $farmSetting->currency }}
+                            </span>
+                        </div>
+                    </div>
+
+                    <a
+                        href="{{ \App\Filament\Pages\FarmSettings::getUrl() }}"
+                        class="text-sm font-semibold text-success-600 hover:text-success-700"
+                    >
+                        Edit Farm Settings â†’
+                    </a>
+                </div>
+            @else
+                <div class="py-5 text-center">
+                    <h2 class="text-xl font-bold">Welcome to Nature Agro</h2>
+                    <p class="mt-2 text-sm text-gray-500">
+                        Configure your farm settings to get started.
+                    </p>
+                </div>
+            @endif
+        </x-filament::section>
+
+        {{-- Dashboard Heading --}}
+        <div class="flex flex-wrap items-center justify-between gap-3">
+            <div>
+                <h2 class="text-xl font-bold text-gray-950 dark:text-white">
+                    Farm Overview
+                </h2>
+                <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">
+                    Monitor your poultry farm performance.
+                </p>
+            </div>
+
+            <div class="text-sm text-gray-500 dark:text-gray-400">
+                <x-filament::icon icon="heroicon-o-calendar-days" class="inline h-4 w-4" />
+                {{ now()->format('d M Y') }}
+            </div>
+        </div>
+
+        {{-- Statistics Cards --}}
+        @php
+            $stats = [
+                [
+                    'label' => 'Total Chickens',
+                    'icon' => 'heroicon-o-beaker',
+                    'description' => 'Farm population',
+                ],
+                [
+                    'label' => "Today's Eggs",
+                    'icon' => 'heroicon-o-sparkles',
+                    'description' => 'Daily production',
+                ],
+                [
+                    'label' => 'Total Income',
+                    'icon' => 'heroicon-o-arrow-trending-up',
+                    'description' => 'Total farm revenue',
+                ],
+                [
+                    'label' => 'Total Expenses',
+                    'icon' => 'heroicon-o-arrow-trending-down',
+                    'description' => 'Total farm costs',
+                ],
+                [
+                    'label' => 'Active Batches',
+                    'icon' => 'heroicon-o-rectangle-stack',
+                    'description' => 'Growing chick batches',
+                ],
+                [
+                    'label' => 'Net Profit / Loss',
+                    'icon' => 'heroicon-o-chart-bar',
+                    'description' => 'Income minus expenses',
+                ],
+            ];
+        @endphp
+
+        <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3">
+            @foreach ($stats as $stat)
+                <x-filament::section>
+                    <div class="flex items-start justify-between gap-3">
+                        <div>
+                            <p class="text-sm font-medium text-gray-500 dark:text-gray-400">
+                                {{ $stat['label'] }}
+                            </p>
+
+                            <p class="mt-3 text-3xl font-bold text-gray-950 dark:text-white">
+                                â€”
+                            </p>
+
+                            <p class="mt-2 text-xs text-gray-500 dark:text-gray-400">
+                                {{ $stat['description'] }}
+                            </p>
+                        </div>
+
+                        <div class="rounded-xl bg-success-50 p-3 dark:bg-success-950">
+                            <x-filament::icon
+                                :icon="$stat['icon']"
+                                class="h-6 w-6 text-success-600 dark:text-success-400"
+                            />
+                        </div>
+                    </div>
+                </x-filament::section>
+            @endforeach
+        </div>
+
+        {{-- Performance Overview --}}
+        <div class="grid grid-cols-1 gap-6 xl:grid-cols-2">
+
+            <x-filament::section>
+                <x-slot name="heading">
+                    Income vs Expenses
+                </x-slot>
+
+                <x-slot name="description">
+                    Financial performance overview
+                </x-slot>
+
+                <div class="flex min-h-48 flex-col items-center justify-center text-center">
+                    <x-filament::icon
+                        icon="heroicon-o-chart-bar-square"
+                        class="h-12 w-12 text-gray-400"
+                    />
+
+                    <h3 class="mt-3 font-semibold text-gray-700 dark:text-gray-200">
+                        Financial Chart
+                    </h3>
+
+                    <p class="mt-1 max-w-sm text-sm text-gray-500">
+                        Income and expense chart will appear when
+                        financial transaction modules are available.
+                    </p>
+                </div>
+            </x-filament::section>
+
+            <x-filament::section>
+                <x-slot name="heading">
+                    Poultry & Batch Overview
+                </x-slot>
+
+                <x-slot name="description">
+                    Monitor chicken population and chick growth
+                </x-slot>
+
+                <div class="flex min-h-48 flex-col items-center justify-center text-center">
+                    <x-filament::icon
+                        icon="heroicon-o-rectangle-stack"
+                        class="h-12 w-12 text-gray-400"
+                    />
+
+                    <h3 class="mt-3 font-semibold text-gray-700 dark:text-gray-200">
+                        Batch Management
+                    </h3>
+
+                    <p class="mt-1 max-w-sm text-sm text-gray-500">
+                        Active batches, chick ages and poultry
+                        statistics will appear here.
+                    </p>
+                </div>
+            </x-filament::section>
+
+        </div>
+
+        {{-- Recent Activities --}}
+        <div class="grid grid-cols-1 gap-6 xl:grid-cols-2">
+
+            <x-filament::section>
+                <x-slot name="heading">
+                    Recent Transactions
+                </x-slot>
+
+                <x-slot name="description">
+                    Latest income and expense records
+                </x-slot>
+
+                <div class="flex min-h-28 flex-col items-center justify-center text-center">
+                    <x-filament::icon
+                        icon="heroicon-o-receipt-percent"
+                        class="h-9 w-9 text-gray-400"
+                    />
+
+                    <p class="mt-2 text-sm text-gray-500">
+                        Transaction records will appear here.
+                    </p>
+                </div>
+            </x-filament::section>
+
+            <x-filament::section>
+                <x-slot name="heading">
+                    Recent Farm Activities
+                </x-slot>
+
+                <x-slot name="description">
+                    Latest updates from your farm
+                </x-slot>
+
+                <div class="flex min-h-28 flex-col items-center justify-center text-center">
+                    <x-filament::icon
+                        icon="heroicon-o-clock"
+                        class="h-9 w-9 text-gray-400"
+                    />
+
+                    <p class="mt-2 text-sm text-gray-500">
+                        Farm activities will appear here.
+                    </p>
+                </div>
+            </x-filament::section>
+
+        </div>
+
+    </div>
+</x-filament-widgets::widget>
+
+
+
+==========================================================================================
+SOURCE FILE: resources\views\welcome.blade.php
+==========================================================================================
+<!DOCTYPE html>
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <title>{{ config('app.name', 'Laravel') }}</title>
+
+        <!-- Fonts -->
+        <link rel="preconnect" href="https://fonts.bunny.net">
+        <link href="https://fonts.bunny.net/css?family=instrument-sans:400,500,600" rel="stylesheet" />
+
+        <!-- Styles / Scripts -->
+        @if (file_exists(public_path('build/manifest.json')) || file_exists(public_path('hot')))
+            @vite(['resources/css/app.css', 'resources/js/app.js'])
+        @else
+            <style>
+

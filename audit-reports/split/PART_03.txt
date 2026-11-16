@@ -1,0 +1,647 @@
+﻿                            ->numeric()
+                            ->disabled()
+                            ->dehydrated(false)
+                            ->visible(fn (?Poultry $record): bool => $record !== null),
+                    ])
+                    ->columns(2),
+
+                Section::make('Purchase & Age')
+                    ->schema([
+                        DatePicker::make('purchase_date')
+                            ->label('Purchase Date')
+                            ->native(false),
+
+                        TextInput::make('unit_purchase_price')
+                            ->label('Unit Purchase Price')
+                            ->numeric()
+                            ->prefix('à§³')
+                            ->minValue(0),
+
+                        DatePicker::make('date_of_birth')
+                            ->label('Date of Birth')
+                            ->native(false),
+                    ])
+                    ->columns(3),
+
+                Section::make('Status & Notes')
+                    ->schema([
+                        Select::make('status')
+                            ->label('Status')
+                            ->options([
+                                Poultry::STATUS_ACTIVE => 'Active',
+                                Poultry::STATUS_SOLD => 'Sold',
+                                Poultry::STATUS_DECEASED => 'Deceased',
+                            ])
+                            ->default(Poultry::STATUS_ACTIVE)
+                            ->required(),
+
+                        Textarea::make('notes')
+                            ->label('Notes')
+                            ->rows(3)
+                            ->columnSpanFull(),
+                    ])
+                    ->columns(2),
+            ]);
+    }
+}
+
+
+==========================================================================================
+SOURCE FILE: app\Filament\Resources\Poultries\Schemas\PoultryInfolist.php
+==========================================================================================
+<?php
+
+namespace App\Filament\Resources\Poultries\Schemas;
+
+use Filament\Infolists\Components\TextEntry;
+use Filament\Schemas\Components\Section;
+use Filament\Schemas\Schema;
+
+class PoultryInfolist
+{
+    public static function configure(Schema $schema): Schema
+    {
+        return $schema
+            ->components([
+                Section::make('Poultry Identification')
+                    ->columns(2)
+                    ->schema([
+                        TextEntry::make('poultry_code')
+                            ->label('Poultry Code')
+                            ->copyable(),
+
+                        TextEntry::make('name')
+                            ->label('Name'),
+
+                        TextEntry::make('type')
+                            ->label('Type')
+                            ->badge(),
+
+                        TextEntry::make('breed')
+                            ->label('Breed')
+                            ->placeholder('Not specified'),
+                    ]),
+
+                Section::make('Quantity Information')
+                    ->columns(2)
+                    ->schema([
+                        TextEntry::make('initial_quantity')
+                            ->label('Initial Quantity')
+                            ->numeric(),
+
+                        TextEntry::make('current_quantity')
+                            ->label('Current Quantity')
+                            ->numeric(),
+                    ]),
+
+                Section::make('Purchase & Age Information')
+                    ->columns(2)
+                    ->schema([
+                        TextEntry::make('purchase_date')
+                            ->label('Purchase Date')
+                            ->date('d M Y')
+                            ->placeholder('Not specified'),
+
+                        TextEntry::make('unit_purchase_price')
+                            ->label('Purchase Price Per Bird')
+                            ->money('BDT')
+                            ->placeholder('Not specified'),
+
+                        TextEntry::make('date_of_birth')
+                            ->label('Date of Birth')
+                            ->date('d M Y')
+                            ->placeholder('Not specified'),
+                    ]),
+
+                Section::make('Status & Additional Information')
+                    ->columns(2)
+                    ->schema([
+                        TextEntry::make('status')
+                            ->label('Status')
+                            ->badge(),
+
+                        TextEntry::make('notes')
+                            ->label('Notes')
+                            ->placeholder('No additional notes')
+                            ->columnSpanFull(),
+
+                        TextEntry::make('created_at')
+                            ->label('Created At')
+                            ->dateTime(),
+
+                        TextEntry::make('updated_at')
+                            ->label('Last Updated')
+                            ->dateTime(),
+                    ]),
+            ]);
+    }
+}
+
+
+
+==========================================================================================
+SOURCE FILE: app\Filament\Resources\Poultries\Tables\PoultriesTable.php
+==========================================================================================
+<?php
+
+namespace App\Filament\Resources\Poultries\Tables;
+
+use App\Models\Poultry;
+use Filament\Actions\BulkActionGroup;
+use Filament\Actions\DeleteBulkAction;
+use Filament\Actions\EditAction;
+use Filament\Actions\ViewAction;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Filters\SelectFilter;
+use Filament\Tables\Table;
+
+class PoultriesTable
+{
+    public static function configure(Table $table): Table
+    {
+        return $table
+            ->columns([
+                TextColumn::make('poultry_code')
+                    ->label('Poultry Code')
+                    ->searchable()
+                    ->sortable()
+                    ->copyable(),
+
+                TextColumn::make('name')
+                    ->label('Name')
+                    ->searchable()
+                    ->sortable(),
+
+                TextColumn::make('type')
+                    ->label('Type')
+                    ->badge()
+                    ->formatStateUsing(fn (string $state): string => ucfirst($state))
+                    ->color(fn (string $state): string => match ($state) {
+                        Poultry::TYPE_CHICKEN => 'info',
+                        Poultry::TYPE_ROOSTER => 'warning',
+                        default => 'gray',
+                    }),
+
+                TextColumn::make('breed')
+                    ->label('Breed')
+                    ->searchable()
+                    ->placeholder('Not specified'),
+
+                TextColumn::make('initial_quantity')
+                    ->label('Initial')
+                    ->numeric()
+                    ->sortable(),
+
+                TextColumn::make('current_quantity')
+                    ->label('Current Stock')
+                    ->numeric()
+                    ->sortable()
+                    ->weight('bold'),
+
+                TextColumn::make('unit_purchase_price')
+                    ->label('Unit Price')
+                    ->money('BDT')
+                    ->sortable()
+                    ->placeholder('N/A'),
+
+                TextColumn::make('purchase_date')
+                    ->label('Purchase Date')
+                    ->date('d M Y')
+                    ->sortable()
+                    ->placeholder('N/A'),
+
+                TextColumn::make('status')
+                    ->label('Status')
+                    ->badge()
+                    ->formatStateUsing(fn (string $state): string => ucfirst($state))
+                    ->color(fn (string $state): string => match ($state) {
+                        Poultry::STATUS_ACTIVE => 'success',
+                        Poultry::STATUS_SOLD => 'info',
+                        Poultry::STATUS_DECEASED => 'danger',
+                        default => 'gray',
+                    }),
+            ])
+            ->filters([
+                SelectFilter::make('type')
+                    ->label('Poultry Type')
+                    ->options([
+                        Poultry::TYPE_CHICKEN => 'Chicken',
+                        Poultry::TYPE_ROOSTER => 'Rooster',
+                    ]),
+
+                SelectFilter::make('status')
+                    ->label('Status')
+                    ->options([
+                        Poultry::STATUS_ACTIVE => 'Active',
+                        Poultry::STATUS_SOLD => 'Sold',
+                        Poultry::STATUS_DECEASED => 'Deceased',
+                    ]),
+            ])
+            ->recordActions([
+                ViewAction::make(),
+                EditAction::make(),
+            ])
+            ->toolbarActions([
+                BulkActionGroup::make([
+                    DeleteBulkAction::make(),
+                ]),
+            ])
+            ->defaultSort('created_at', 'desc');
+    }
+}
+
+
+
+==========================================================================================
+SOURCE FILE: app\Filament\Widgets\FarmOverviewWidget.php
+==========================================================================================
+<?php
+
+namespace App\Filament\Widgets;
+
+use App\Models\FarmSetting;
+use Filament\Widgets\Widget;
+
+class FarmOverviewWidget extends Widget
+{
+    protected string $view = 'filament.widgets.farm-overview-widget';
+
+    protected int|string|array $columnSpan = 'full';
+
+    public ?FarmSetting $farmSetting = null;
+
+    public function mount(): void
+    {
+        $this->farmSetting = FarmSetting::query()->first();
+    }
+}
+
+
+
+==========================================================================================
+SOURCE FILE: app\Http\Controllers\Controller.php
+==========================================================================================
+<?php
+
+namespace App\Http\Controllers;
+
+abstract class Controller
+{
+    //
+}
+
+
+
+==========================================================================================
+SOURCE FILE: app\Models\FarmSetting.php
+==========================================================================================
+<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Model;
+
+class FarmSetting extends Model
+{
+    protected $fillable = [
+        'farm_name',
+        'owner_name',
+        'phone_number',
+        'address',
+        'description',
+        'currency',
+        'farm_logo',
+    ];
+}
+
+
+
+==========================================================================================
+SOURCE FILE: app\Models\Poultry.php
+==========================================================================================
+<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Str;
+
+class Poultry extends Model
+{
+    public const TYPE_CHICKEN = 'chicken';
+
+    public const TYPE_ROOSTER = 'rooster';
+
+    public const STATUS_ACTIVE = 'active';
+
+    public const STATUS_SOLD = 'sold';
+
+    public const STATUS_DECEASED = 'deceased';
+
+    protected $fillable = [
+        'poultry_code',
+        'name',
+        'type',
+        'breed',
+        'initial_quantity',
+        'current_quantity',
+        'purchase_date',
+        'unit_purchase_price',
+        'date_of_birth',
+        'status',
+        'notes',
+    ];
+
+    protected function casts(): array
+    {
+        return [
+            'initial_quantity' => 'integer',
+            'current_quantity' => 'integer',
+            'purchase_date' => 'date',
+            'date_of_birth' => 'date',
+            'unit_purchase_price' => 'decimal:2',
+        ];
+    }
+
+    protected static function booted(): void
+    {
+        static::creating(function (Poultry $poultry): void {
+            if (blank($poultry->poultry_code)) {
+                do {
+                    $code = 'POU-' . now()->format('Ymd') . '-' . Str::upper(Str::random(5));
+                } while (static::query()->where('poultry_code', $code)->exists());
+
+                $poultry->poultry_code = $code;
+            }
+
+            // Initial stock is the starting current stock.
+            $poultry->current_quantity = $poultry->initial_quantity;
+        });
+    }
+
+    public function scopeActive(Builder $query): Builder
+    {
+        return $query->where('status', self::STATUS_ACTIVE);
+    }
+
+    public function scopeChickens(Builder $query): Builder
+    {
+        return $query->where('type', self::TYPE_CHICKEN);
+    }
+
+    public function scopeRoosters(Builder $query): Builder
+    {
+        return $query->where('type', self::TYPE_ROOSTER);
+    }
+}
+
+
+
+==========================================================================================
+SOURCE FILE: app\Models\User.php
+==========================================================================================
+<?php
+
+namespace App\Models;
+
+use Database\Factories\UserFactory;
+use Filament\Models\Contracts\FilamentUser;
+use Filament\Panel;
+use Illuminate\Database\Eloquent\Attributes\Fillable;
+use Illuminate\Database\Eloquent\Attributes\Hidden;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Notifications\Notifiable;
+
+#[Fillable([
+    'name',
+    'email',
+    'password',
+    'role',
+    'is_active',
+])]
+#[Hidden(['password', 'remember_token'])]
+class User extends Authenticatable implements FilamentUser
+{
+    /** @use HasFactory<UserFactory> */
+    use HasFactory, Notifiable;
+
+    protected function casts(): array
+    {
+        return [
+            'email_verified_at' => 'datetime',
+            'password' => 'hashed',
+            'is_active' => 'boolean',
+        ];
+    }
+
+    public function isAdmin(): bool
+    {
+        return $this->role === 'admin';
+    }
+
+    public function isActive(): bool
+    {
+        return $this->is_active;
+    }
+
+    public function canAccessPanel(Panel $panel): bool
+    {
+        return $this->isAdmin() && $this->isActive();
+    }
+}
+
+
+
+==========================================================================================
+SOURCE FILE: app\Providers\AppServiceProvider.php
+==========================================================================================
+<?php
+
+namespace App\Providers;
+
+use Illuminate\Support\ServiceProvider;
+
+class AppServiceProvider extends ServiceProvider
+{
+    /**
+     * Register any application services.
+     */
+    public function register(): void
+    {
+        //
+    }
+
+    /**
+     * Bootstrap any application services.
+     */
+    public function boot(): void
+    {
+        //
+    }
+}
+
+
+
+==========================================================================================
+SOURCE FILE: app\Providers\Filament\AdminPanelProvider.php
+==========================================================================================
+<?php
+
+namespace App\Providers\Filament;
+
+use Filament\Http\Middleware\Authenticate;
+use Filament\Http\Middleware\AuthenticateSession;
+use Filament\Http\Middleware\DisableBladeIconComponents;
+use Filament\Http\Middleware\DispatchServingFilamentEvent;
+use Filament\Pages\Dashboard;
+use Filament\Panel;
+use Filament\PanelProvider;
+use Filament\Support\Colors\Color;
+use Filament\Widgets\AccountWidget;
+use Filament\Widgets\FilamentInfoWidget;
+use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
+use Illuminate\Cookie\Middleware\EncryptCookies;
+use Illuminate\Foundation\Http\Middleware\PreventRequestForgery;
+use Illuminate\Routing\Middleware\SubstituteBindings;
+use Illuminate\Session\Middleware\StartSession;
+use Illuminate\View\Middleware\ShareErrorsFromSession;
+
+class AdminPanelProvider extends PanelProvider
+{
+    public function panel(Panel $panel): Panel
+    {
+        return $panel
+            ->default()
+            ->id('admin')
+            ->path('admin')
+            ->viteTheme('resources/css/filament/admin/theme.css')
+            ->login()
+            ->colors([
+                'primary' => Color::Amber,
+            ])
+            ->discoverResources(in: app_path('Filament/Resources'), for: 'App\Filament\Resources')
+            ->discoverPages(in: app_path('Filament/Pages'), for: 'App\Filament\Pages')
+            ->pages([
+                Dashboard::class,
+            ])
+            ->discoverWidgets(in: app_path('Filament/Widgets'), for: 'App\Filament\Widgets')
+            ->widgets([
+                AccountWidget::class,
+                FilamentInfoWidget::class,
+            ])
+            ->middleware([
+                EncryptCookies::class,
+                AddQueuedCookiesToResponse::class,
+                StartSession::class,
+                AuthenticateSession::class,
+                ShareErrorsFromSession::class,
+                PreventRequestForgery::class,
+                SubstituteBindings::class,
+                DisableBladeIconComponents::class,
+                DispatchServingFilamentEvent::class,
+            ])
+            ->authMiddleware([
+                Authenticate::class,
+            ]);
+    }
+}
+
+
+
+==========================================================================================
+SOURCE FILE: artisan
+==========================================================================================
+#!/usr/bin/env php
+<?php
+
+use Illuminate\Foundation\Application;
+use Symfony\Component\Console\Input\ArgvInput;
+
+define('LARAVEL_START', microtime(true));
+
+// Register the Composer autoloader...
+require __DIR__.'/vendor/autoload.php';
+
+// Bootstrap Laravel and handle the command...
+/** @var Application $app */
+$app = require_once __DIR__.'/bootstrap/app.php';
+
+$status = $app->handleCommand(new ArgvInput);
+
+exit($status);
+
+
+
+==========================================================================================
+SOURCE FILE: bootstrap\app.php
+==========================================================================================
+<?php
+
+use Illuminate\Foundation\Application;
+use Illuminate\Foundation\Configuration\Exceptions;
+use Illuminate\Foundation\Configuration\Middleware;
+
+return Application::configure(basePath: dirname(__DIR__))
+    ->withRouting(
+        web: __DIR__.'/../routes/web.php',
+        commands: __DIR__.'/../routes/console.php',
+        health: '/up',
+    )
+    ->withMiddleware(function (Middleware $middleware): void {
+        //
+    })
+    ->withExceptions(function (Exceptions $exceptions): void {
+        //
+    })->create();
+
+
+
+==========================================================================================
+SOURCE FILE: bootstrap\providers.php
+==========================================================================================
+<?php
+
+return [
+    App\Providers\AppServiceProvider::class,
+    App\Providers\Filament\AdminPanelProvider::class,
+];
+
+
+
+==========================================================================================
+SOURCE FILE: composer.json
+==========================================================================================
+{
+    "$schema": "https://getcomposer.org/schema.json",
+    "name": "laravel/laravel",
+    "type": "project",
+    "description": "The skeleton application for the Laravel framework.",
+    "keywords": ["laravel", "framework"],
+    "license": "MIT",
+    "require": {
+        "php": "^8.3",
+        "filament/filament": "~5.0",
+        "laravel/framework": "^13.0",
+        "laravel/tinker": "^3.0"
+    },
+    "require-dev": {
+        "fakerphp/faker": "^1.23",
+        "laravel/pail": "^1.2.5",
+        "laravel/pint": "^1.27",
+        "mockery/mockery": "^1.6",
+        "nunomaduro/collision": "^8.6",
+        "phpunit/phpunit": "^12.5.12"
+    },
+    "autoload": {
+        "psr-4": {
+            "App\\": "app/",
+            "Database\\Factories\\": "database/factories/",
+            "Database\\Seeders\\": "database/seeders/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Tests\\": "tests/"
+

@@ -1,0 +1,474 @@
+﻿E:\4- Web Development Project\nature-agro\database\migrations\0001_01_01_000002_create_jobs_table.php
+E:\4- Web Development Project\nature-agro\database\migrations\2026_11_12_142513_create_farm_settings_table.php
+E:\4- Web Development Project\nature-agro\database\migrations\2026_11_12_143706_add_role_and_is_active_to_users_table.php
+E:\4- Web Development Project\nature-agro\database\migrations\2026_11_15_183649_create_poultries_table.php
+E:\4- Web Development Project\nature-agro\database\seeders\DatabaseSeeder.php
+
+
+==========================================================================================
+FILE INVENTORY: tests
+==========================================================================================
+E:\4- Web Development Project\nature-agro\tests\TestCase.php
+E:\4- Web Development Project\nature-agro\tests\Feature\AdminAuthenticationTest.php
+E:\4- Web Development Project\nature-agro\tests\Feature\ExampleTest.php
+E:\4- Web Development Project\nature-agro\tests\Feature\UserAuthorizationTest.php
+E:\4- Web Development Project\nature-agro\tests\Unit\ExampleTest.php
+
+
+==========================================================================================
+FILE INVENTORY: resources
+==========================================================================================
+E:\4- Web Development Project\nature-agro\resources\css\app.css
+E:\4- Web Development Project\nature-agro\resources\css\filament\admin\theme.css
+E:\4- Web Development Project\nature-agro\resources\js\app.js
+E:\4- Web Development Project\nature-agro\resources\js\bootstrap.js
+E:\4- Web Development Project\nature-agro\resources\views\welcome.blade.php
+E:\4- Web Development Project\nature-agro\resources\views\filament\pages\farm-settings.blade.php
+E:\4- Web Development Project\nature-agro\resources\views\filament\widgets\farm-overview-widget.blade.php
+
+
+==========================================================================================
+FILE INVENTORY: config
+==========================================================================================
+E:\4- Web Development Project\nature-agro\config\app.php
+E:\4- Web Development Project\nature-agro\config\auth.php
+E:\4- Web Development Project\nature-agro\config\cache.php
+E:\4- Web Development Project\nature-agro\config\database.php
+E:\4- Web Development Project\nature-agro\config\filesystems.php
+E:\4- Web Development Project\nature-agro\config\logging.php
+E:\4- Web Development Project\nature-agro\config\mail.php
+E:\4- Web Development Project\nature-agro\config\queue.php
+E:\4- Web Development Project\nature-agro\config\services.php
+E:\4- Web Development Project\nature-agro\config\session.php
+
+
+==========================================================================================
+FILE INVENTORY: bootstrap
+==========================================================================================
+E:\4- Web Development Project\nature-agro\bootstrap\app.php
+E:\4- Web Development Project\nature-agro\bootstrap\providers.php
+
+
+==========================================================================================
+FILE INVENTORY: public
+==========================================================================================
+E:\4- Web Development Project\nature-agro\public\.htaccess
+E:\4- Web Development Project\nature-agro\public\favicon.ico
+E:\4- Web Development Project\nature-agro\public\index.php
+E:\4- Web Development Project\nature-agro\public\robots.txt
+E:\4- Web Development Project\nature-agro\public\build\manifest.json
+E:\4- Web Development Project\nature-agro\public\build\assets\app-bKp4nZPb.css
+E:\4- Web Development Project\nature-agro\public\build\assets\app-Bwn9szyo.js
+E:\4- Web Development Project\nature-agro\public\build\assets\theme-bDgxfMbY.css
+E:\4- Web Development Project\nature-agro\public\css\filament\filament\app.css
+E:\4- Web Development Project\nature-agro\public\fonts\filament\filament\inter\index.css
+E:\4- Web Development Project\nature-agro\public\fonts\filament\filament\inter\inter-cyrillic-ext-wght-normal-SP7Z6XGK.woff2
+E:\4- Web Development Project\nature-agro\public\fonts\filament\filament\inter\inter-cyrillic-wght-normal-DR6K5BQD.woff2
+E:\4- Web Development Project\nature-agro\public\fonts\filament\filament\inter\inter-greek-ext-wght-normal-A2J6H3EX.woff2
+E:\4- Web Development Project\nature-agro\public\fonts\filament\filament\inter\inter-greek-wght-normal-ZABHMKQG.woff2
+E:\4- Web Development Project\nature-agro\public\fonts\filament\filament\inter\inter-latin-ext-wght-normal-ZIT2UBIY.woff2
+E:\4- Web Development Project\nature-agro\public\fonts\filament\filament\inter\inter-latin-wght-normal-DIHYUR35.woff2
+E:\4- Web Development Project\nature-agro\public\fonts\filament\filament\inter\inter-vietnamese-wght-normal-VWEHJHBA.woff2
+E:\4- Web Development Project\nature-agro\public\js\filament\actions\actions.js
+E:\4- Web Development Project\nature-agro\public\js\filament\filament\app.js
+E:\4- Web Development Project\nature-agro\public\js\filament\filament\echo.js
+E:\4- Web Development Project\nature-agro\public\js\filament\forms\components\builder.js
+E:\4- Web Development Project\nature-agro\public\js\filament\forms\components\checkbox-list.js
+E:\4- Web Development Project\nature-agro\public\js\filament\forms\components\code-editor.js
+E:\4- Web Development Project\nature-agro\public\js\filament\forms\components\color-picker.js
+E:\4- Web Development Project\nature-agro\public\js\filament\forms\components\date-time-picker.js
+E:\4- Web Development Project\nature-agro\public\js\filament\forms\components\file-upload.js
+E:\4- Web Development Project\nature-agro\public\js\filament\forms\components\js-field.js
+E:\4- Web Development Project\nature-agro\public\js\filament\forms\components\key-value.js
+E:\4- Web Development Project\nature-agro\public\js\filament\forms\components\markdown-editor.js
+E:\4- Web Development Project\nature-agro\public\js\filament\forms\components\repeater.js
+E:\4- Web Development Project\nature-agro\public\js\filament\forms\components\rich-editor.js
+E:\4- Web Development Project\nature-agro\public\js\filament\forms\components\select.js
+E:\4- Web Development Project\nature-agro\public\js\filament\forms\components\slider.js
+E:\4- Web Development Project\nature-agro\public\js\filament\forms\components\tags-input.js
+E:\4- Web Development Project\nature-agro\public\js\filament\forms\components\textarea.js
+E:\4- Web Development Project\nature-agro\public\js\filament\forms\components\toggle-buttons.js
+E:\4- Web Development Project\nature-agro\public\js\filament\forms\components\text-input\password-reveal.js
+E:\4- Web Development Project\nature-agro\public\js\filament\notifications\notifications.js
+E:\4- Web Development Project\nature-agro\public\js\filament\schemas\schemas.js
+E:\4- Web Development Project\nature-agro\public\js\filament\schemas\components\actions.js
+E:\4- Web Development Project\nature-agro\public\js\filament\schemas\components\js-component.js
+E:\4- Web Development Project\nature-agro\public\js\filament\schemas\components\tabs.js
+E:\4- Web Development Project\nature-agro\public\js\filament\schemas\components\wizard.js
+E:\4- Web Development Project\nature-agro\public\js\filament\support\support.js
+E:\4- Web Development Project\nature-agro\public\js\filament\tables\tables.js
+E:\4- Web Development Project\nature-agro\public\js\filament\tables\components\columns\checkbox.js
+E:\4- Web Development Project\nature-agro\public\js\filament\tables\components\columns\select.js
+E:\4- Web Development Project\nature-agro\public\js\filament\tables\components\columns\text-input.js
+E:\4- Web Development Project\nature-agro\public\js\filament\tables\components\columns\toggle.js
+E:\4- Web Development Project\nature-agro\public\js\filament\widgets\components\chart.js
+E:\4- Web Development Project\nature-agro\public\js\filament\widgets\components\js-widget.js
+E:\4- Web Development Project\nature-agro\public\js\filament\widgets\components\stats-overview\stat\chart.js
+
+
+==========================================================================================
+SOURCE CODE COLLECTION SUMMARY
+==========================================================================================
+Total Source Files Collected: 90
+Maximum Individual File Size: 200 KB
+Excluded: .env, vendor, node_modules, storage, .git
+
+
+==========================================================================================
+SOURCE FILE: app\Filament\Pages\FarmSettings.php
+==========================================================================================
+<?php
+
+namespace App\Filament\Pages;
+
+use App\Models\FarmSetting;
+use Filament\Actions\Action;
+use Filament\Forms\Components\FileUpload;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\Textarea;
+use Filament\Forms\Components\TextInput;
+use Filament\Notifications\Notification;
+use Filament\Pages\Page;
+use Filament\Schemas\Components\Actions;
+use Filament\Schemas\Components\Form;
+use Filament\Schemas\Components\Section;
+use Filament\Schemas\Schema;
+
+class FarmSettings extends Page
+{
+    protected string $view = 'filament.pages.farm-settings';
+
+    protected static ?string $navigationLabel = 'Farm Settings';
+
+    protected static string|\UnitEnum|null $navigationGroup = 'Farm Management';
+
+    protected static \BackedEnum|string|null $navigationIcon = 'heroicon-o-cog-6-tooth';
+
+    protected static ?int $navigationSort = 90;
+
+    protected static ?string $title = 'Farm Settings';
+
+    public ?array $data = [];
+
+    public function mount(): void
+    {
+        $this->form->fill(
+            $this->getRecord()?->attributesToArray()
+        );
+    }
+
+    public function form(Schema $schema): Schema
+    {
+        return $schema
+            ->components([
+                Form::make([
+                    Section::make('Farm Information')
+                        ->description('Manage your farm identity and contact information.')
+                        ->schema([
+                            TextInput::make('farm_name')
+                                ->label('Farm Name')
+                                ->required()
+                                ->maxLength(255),
+
+                            TextInput::make('owner_name')
+                                ->label('Owner Name')
+                                ->required()
+                                ->maxLength(255),
+
+                            TextInput::make('phone_number')
+                                ->label('Phone Number')
+                                ->tel()
+                                ->regex('/^[0-9+\-\s()]+$/')
+                                ->maxLength(20),
+
+                            Textarea::make('address')
+                                ->label('Farm Address')
+                                ->rows(3),
+
+                            Textarea::make('description')
+                                ->label('Farm Description')
+                                ->rows(4),
+                        ])
+                        ->columns(2),
+
+                    Section::make('Regional Settings')
+                        ->schema([
+                            Select::make('currency')
+                                ->label('Currency')
+                                ->options([
+                                    'BDT' => 'BDT - Bangladeshi Taka',
+                                ])
+                                ->required(),
+                        ]),
+
+                    Section::make('Farm Logo')
+                        ->schema([
+                            FileUpload::make('farm_logo')
+                                ->label('Upload Farm Logo')
+                                ->image()
+                                ->disk('public')
+                                ->directory('farm-logos')
+                                ->imageEditor()
+                                ->maxSize(2048),
+                        ]),
+                ])
+                    ->livewireSubmitHandler('save')
+                    ->footer([
+                        Actions::make([
+                            Action::make('save')
+                                ->label('Save Farm Settings')
+                                ->submit('save')
+                                ->keyBindings(['mod+s']),
+                        ]),
+                    ]),
+            ])
+            ->record($this->getRecord())
+            ->statePath('data');
+    }
+
+    public function save(): void
+    {
+        $data = $this->form->getState();
+
+        $record = $this->getRecord() ?? new FarmSetting();
+
+        $record->fill($data);
+        $record->save();
+
+        if ($record->wasRecentlyCreated) {
+            $this->form->record($record)->saveRelationships();
+        }
+
+        Notification::make()
+            ->success()
+            ->title('Farm settings saved successfully!')
+            ->send();
+    }
+
+    public function getRecord(): ?FarmSetting
+    {
+        return FarmSetting::query()->first();
+    }
+}
+
+
+
+==========================================================================================
+SOURCE FILE: app\Filament\Resources\Poultries\Pages\CreatePoultry.php
+==========================================================================================
+<?php
+
+namespace App\Filament\Resources\Poultries\Pages;
+
+use App\Filament\Resources\Poultries\PoultryResource;
+use Filament\Resources\Pages\CreateRecord;
+
+class CreatePoultry extends CreateRecord
+{
+    protected static string $resource = PoultryResource::class;
+}
+
+
+
+==========================================================================================
+SOURCE FILE: app\Filament\Resources\Poultries\Pages\EditPoultry.php
+==========================================================================================
+<?php
+
+namespace App\Filament\Resources\Poultries\Pages;
+
+use App\Filament\Resources\Poultries\PoultryResource;
+use Filament\Actions\DeleteAction;
+use Filament\Actions\ViewAction;
+use Filament\Resources\Pages\EditRecord;
+
+class EditPoultry extends EditRecord
+{
+    protected static string $resource = PoultryResource::class;
+
+    protected function getHeaderActions(): array
+    {
+        return [
+            ViewAction::make(),
+            DeleteAction::make(),
+        ];
+    }
+}
+
+
+
+==========================================================================================
+SOURCE FILE: app\Filament\Resources\Poultries\Pages\ListPoultries.php
+==========================================================================================
+<?php
+
+namespace App\Filament\Resources\Poultries\Pages;
+
+use App\Filament\Resources\Poultries\PoultryResource;
+use Filament\Actions\CreateAction;
+use Filament\Resources\Pages\ListRecords;
+
+class ListPoultries extends ListRecords
+{
+    protected static string $resource = PoultryResource::class;
+
+    protected function getHeaderActions(): array
+    {
+        return [
+            CreateAction::make(),
+        ];
+    }
+}
+
+
+
+==========================================================================================
+SOURCE FILE: app\Filament\Resources\Poultries\Pages\ViewPoultry.php
+==========================================================================================
+<?php
+
+namespace App\Filament\Resources\Poultries\Pages;
+
+use App\Filament\Resources\Poultries\PoultryResource;
+use Filament\Actions\EditAction;
+use Filament\Resources\Pages\ViewRecord;
+
+class ViewPoultry extends ViewRecord
+{
+    protected static string $resource = PoultryResource::class;
+
+    protected function getHeaderActions(): array
+    {
+        return [
+            EditAction::make(),
+        ];
+    }
+}
+
+
+
+==========================================================================================
+SOURCE FILE: app\Filament\Resources\Poultries\PoultryResource.php
+==========================================================================================
+<?php
+
+namespace App\Filament\Resources\Poultries;
+
+use App\Filament\Resources\Poultries\Pages\CreatePoultry;
+use App\Filament\Resources\Poultries\Pages\EditPoultry;
+use App\Filament\Resources\Poultries\Pages\ListPoultries;
+use App\Filament\Resources\Poultries\Pages\ViewPoultry;
+use App\Filament\Resources\Poultries\Schemas\PoultryForm;
+use App\Filament\Resources\Poultries\Schemas\PoultryInfolist;
+use App\Filament\Resources\Poultries\Tables\PoultriesTable;
+use App\Models\Poultry;
+use BackedEnum;
+use Filament\Resources\Resource;
+use Filament\Schemas\Schema;
+use Filament\Support\Icons\Heroicon;
+use Filament\Tables\Table;
+
+class PoultryResource extends Resource
+{
+    protected static ?string $model = Poultry::class;
+
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
+
+    protected static ?string $recordTitleAttribute = 'Nautre Agro';
+
+    public static function form(Schema $schema): Schema
+    {
+        return PoultryForm::configure($schema);
+    }
+
+    public static function infolist(Schema $schema): Schema
+    {
+        return PoultryInfolist::configure($schema);
+    }
+
+    public static function table(Table $table): Table
+    {
+        return PoultriesTable::configure($table);
+    }
+
+    public static function getRelations(): array
+    {
+        return [
+            //
+        ];
+    }
+
+    public static function getPages(): array
+    {
+        return [
+            'index' => ListPoultries::route('/'),
+            'create' => CreatePoultry::route('/create'),
+            'view' => ViewPoultry::route('/{record}'),
+            'edit' => EditPoultry::route('/{record}/edit'),
+        ];
+    }
+}
+
+
+
+==========================================================================================
+SOURCE FILE: app\Filament\Resources\Poultries\Schemas\PoultryForm.php
+==========================================================================================
+<?php
+
+namespace App\Filament\Resources\Poultries\Schemas;
+
+use App\Models\Poultry;
+use Filament\Forms\Components\DatePicker;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\Textarea;
+use Filament\Forms\Components\TextInput;
+use Filament\Schemas\Components\Section;
+use Filament\Schemas\Schema;
+
+class PoultryForm
+{
+    public static function configure(Schema $schema): Schema
+    {
+        return $schema
+            ->components([
+                Section::make('Poultry Information')
+                    ->schema([
+                        TextInput::make('poultry_code')
+                            ->label('Poultry Code')
+                            ->default(fn () => 'POU-' . now()->format('Ymd') . '-' . strtoupper(\Illuminate\Support\Str::random(5)))
+                            ->required()
+                            ->unique(ignoreRecord: true)
+                            ->maxLength(50),
+
+                        TextInput::make('name')
+                            ->label('Name')
+                            ->required()
+                            ->maxLength(150),
+
+                        Select::make('type')
+                            ->label('Poultry Type')
+                            ->options([
+                                Poultry::TYPE_CHICKEN => 'Chicken',
+                                Poultry::TYPE_ROOSTER => 'Rooster',
+                            ])
+                            ->required(),
+
+                        TextInput::make('breed')
+                            ->label('Breed')
+                            ->maxLength(100),
+                    ])
+                    ->columns(2),
+
+                Section::make('Quantity')
+                    ->schema([
+                        TextInput::make('initial_quantity')
+                            ->label('Initial Quantity')
+                            ->numeric()
+                            ->integer()
+                            ->minValue(1)
+                            ->required(),
+
+                        TextInput::make('current_quantity')
+                            ->label('Current Quantity')
+

@@ -1,0 +1,366 @@
+﻿
+
+==========================================================================================
+PROJECT INFORMATION
+==========================================================================================
+Project: Nature Agro
+Audit Date: 11/15/2026 22:24:36
+Project Path: E:\4- Web Development Project\nature-agro
+PHP Version:
+PHP 8.5.6 (cli) (built: May  6 2026 09:28:51) (ZTS Visual C++ 2022 x86)
+Composer Version:
+Composer version 2.11.2 2026-11-10 10:09:37
+Laravel Version:
+Laravel Framework 13.42.0
+
+
+==========================================================================================
+GIT STATUS
+==========================================================================================
+## main...origin/main
+ M app/Providers/Filament/AdminPanelProvider.php
+ M package-lock.json
+ M package.json
+ M vite.config.js
+?? .env.testing
+?? app/Filament/
+?? app/Models/Poultry.php
+?? audit-reports/
+?? database/migrations/2026_11_15_183649_create_poultries_table.php
+?? resources/css/filament/
+?? resources/views/filament/
+?? tests/Feature/AdminAuthenticationTest.php
+?? tests/Feature/UserAuthorizationTest.php
+
+
+
+==========================================================================================
+RECENT GIT COMMITS
+==========================================================================================
+893690a Initial commit: Nature Agro Laravel foundation
+
+
+
+==========================================================================================
+GIT TRACKED FILE SUMMARY
+==========================================================================================
+.editorconfig
+.env.example
+.gitattributes
+.gitignore
+README.md
+app/Http/Controllers/Controller.php
+app/Models/FarmSetting.php
+app/Models/User.php
+app/Providers/AppServiceProvider.php
+app/Providers/Filament/AdminPanelProvider.php
+artisan
+bootstrap/app.php
+bootstrap/cache/.gitignore
+bootstrap/providers.php
+composer.json
+composer.lock
+config/app.php
+config/auth.php
+config/cache.php
+config/database.php
+config/filesystems.php
+config/logging.php
+config/mail.php
+config/queue.php
+config/services.php
+config/session.php
+database/.gitignore
+database/factories/UserFactory.php
+database/migrations/0001_01_01_000000_create_users_table.php
+database/migrations/0001_01_01_000001_create_cache_table.php
+database/migrations/0001_01_01_000002_create_jobs_table.php
+database/migrations/2026_11_12_142513_create_farm_settings_table.php
+database/migrations/2026_11_12_143706_add_role_and_is_active_to_users_table.php
+database/seeders/DatabaseSeeder.php
+package-lock.json
+package.json
+phpunit.xml
+public/.htaccess
+public/favicon.ico
+public/index.php
+public/robots.txt
+resources/css/app.css
+resources/js/app.js
+resources/js/bootstrap.js
+resources/views/welcome.blade.php
+routes/console.php
+routes/web.php
+storage/app/.gitignore
+storage/app/private/.gitignore
+storage/app/public/.gitignore
+storage/framework/.gitignore
+storage/framework/cache/.gitignore
+storage/framework/cache/data/.gitignore
+storage/framework/sessions/.gitignore
+storage/framework/testing/.gitignore
+storage/framework/views/.gitignore
+storage/logs/.gitignore
+tests/Feature/ExampleTest.php
+tests/TestCase.php
+tests/Unit/ExampleTest.php
+vite.config.js
+
+
+
+==========================================================================================
+LARAVEL APPLICATION INFO
+==========================================================================================
+
+  Environment ................................................................  
+  Application Name ............................................... Nature Agro  
+  Laravel Version .................................................... 13.42.0  
+  PHP Version .......................................................... 8.5.6  
+  Composer Version .................................................... 2.11.2  
+  Environment .......................................................... local  
+  Debug Mode ......................................................... ENABLED  
+  URL .............................................................. localhost  
+  Maintenance Mode ....................................................... OFF  
+  Timezone ........................................................ Asia/Dhaka  
+  Locale .................................................................. en  
+
+  Cache ......................................................................  
+  Config .......................................................... NOT CACHED  
+  Events .......................................................... NOT CACHED  
+  Routes .......................................................... NOT CACHED  
+  Views ........................................................... NOT CACHED  
+
+  Drivers ....................................................................  
+  Broadcasting ........................................................... log  
+  Cache ............................................................. database  
+  Database ............................................................. pgsql  
+  Logs ........................................................ stack / single  
+  Mail ................................................................... log  
+  Queue ............................................................. database  
+  Session ........................................................... database  
+
+  Storage ....................................................................  
+  E:\4- Web Development Project\nature-agro\public\storage ............ LINKED  
+
+  Filament ...................................................................  
+  Blade Icons ..................................................... NOT CACHED  
+  Packages  filament, forms, notifications, support, tables, actions, infolists, schemas, widgets  
+  Panel Components ................................................ NOT CACHED  
+  Version ............................................................ v5.11.2  
+  Views ........................................................ NOT PUBLISHED  
+
+  Livewire ...................................................................  
+  Livewire ............................................................ v4.4.8  
+
+
+
+
+==========================================================================================
+ALL ROUTES WITH MIDDLEWARE
+==========================================================================================
+
+  GET|HEAD  / ............................................... routes/web.php:5
+            Γçé web
+  GET|HEAD  admin filament.admin.pages.dashboard ΓÇ║ Filament\Pages ΓÇ║ Dashboard
+            Γçé Filament\Http\Middleware\SetUpPanel:admin
+            Γçé Illuminate\Cookie\Middleware\EncryptCookies
+            Γçé Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse
+            Γçé Illuminate\Session\Middleware\StartSession
+            Γçé Illuminate\View\Middleware\ShareErrorsFromSession
+            Γçé Filament\Http\Middleware\Authenticate
+            Γçé Filament\Http\Middleware\AuthenticateSession
+            Γçé Illuminate\Foundation\Http\Middleware\PreventRequestForgery
+            Γçé Illuminate\Routing\Middleware\SubstituteBindings
+            Γçé Filament\Http\Middleware\DisableBladeIconComponents
+            Γçé Filament\Http\Middleware\DispatchServingFilamentEvent
+  GET|HEAD  admin/farm-settings filament.admin.pages.farm-settings ΓÇ║ App\Filament\Pages\FarmSettings
+            Γçé Filament\Http\Middleware\SetUpPanel:admin
+            Γçé Illuminate\Cookie\Middleware\EncryptCookies
+            Γçé Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse
+            Γçé Illuminate\Session\Middleware\StartSession
+            Γçé Illuminate\View\Middleware\ShareErrorsFromSession
+            Γçé Filament\Http\Middleware\Authenticate
+            Γçé Filament\Http\Middleware\AuthenticateSession
+            Γçé Illuminate\Foundation\Http\Middleware\PreventRequestForgery
+            Γçé Illuminate\Routing\Middleware\SubstituteBindings
+            Γçé Filament\Http\Middleware\DisableBladeIconComponents
+            Γçé Filament\Http\Middleware\DispatchServingFilamentEvent
+  GET|HEAD  admin/login .... filament.admin.auth.login ΓÇ║ Filament\Auth ΓÇ║ Login
+            Γçé Filament\Http\Middleware\SetUpPanel:admin
+            Γçé Illuminate\Cookie\Middleware\EncryptCookies
+            Γçé Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse
+            Γçé Illuminate\Session\Middleware\StartSession
+            Γçé Illuminate\View\Middleware\ShareErrorsFromSession
+            Γçé Filament\Http\Middleware\AuthenticateSession
+            Γçé Illuminate\Foundation\Http\Middleware\PreventRequestForgery
+            Γçé Illuminate\Routing\Middleware\SubstituteBindings
+            Γçé Filament\Http\Middleware\DisableBladeIconComponents
+            Γçé Filament\Http\Middleware\DispatchServingFilamentEvent
+  POST      admin/logout filament.admin.auth.logout ΓÇ║ Filament\Auth ΓÇ║ LogoutController
+            Γçé Filament\Http\Middleware\SetUpPanel:admin
+            Γçé Illuminate\Cookie\Middleware\EncryptCookies
+            Γçé Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse
+            Γçé Illuminate\Session\Middleware\StartSession
+            Γçé Illuminate\View\Middleware\ShareErrorsFromSession
+            Γçé Filament\Http\Middleware\Authenticate
+            Γçé Filament\Http\Middleware\AuthenticateSession
+            Γçé Illuminate\Foundation\Http\Middleware\PreventRequestForgery
+            Γçé Illuminate\Routing\Middleware\SubstituteBindings
+            Γçé Filament\Http\Middleware\DisableBladeIconComponents
+            Γçé Filament\Http\Middleware\DispatchServingFilamentEvent
+  GET|HEAD  admin/poultries filament.admin.resources.poultries.index ΓÇ║ App\Filament\Resources\Poultries\Pages\ListPoultries
+            Γçé Filament\Http\Middleware\SetUpPanel:admin
+            Γçé Illuminate\Cookie\Middleware\EncryptCookies
+            Γçé Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse
+            Γçé Illuminate\Session\Middleware\StartSession
+            Γçé Illuminate\View\Middleware\ShareErrorsFromSession
+            Γçé Filament\Http\Middleware\Authenticate
+            Γçé Filament\Http\Middleware\AuthenticateSession
+            Γçé Illuminate\Foundation\Http\Middleware\PreventRequestForgery
+            Γçé Illuminate\Routing\Middleware\SubstituteBindings
+            Γçé Filament\Http\Middleware\DisableBladeIconComponents
+            Γçé Filament\Http\Middleware\DispatchServingFilamentEvent
+  GET|HEAD  admin/poultries/create filament.admin.resources.poultries.create ΓÇ║ App\Filament\Resources\Poultries\Pages\CreatePoultry
+            Γçé Filament\Http\Middleware\SetUpPanel:admin
+            Γçé Illuminate\Cookie\Middleware\EncryptCookies
+            Γçé Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse
+            Γçé Illuminate\Session\Middleware\StartSession
+            Γçé Illuminate\View\Middleware\ShareErrorsFromSession
+            Γçé Filament\Http\Middleware\Authenticate
+            Γçé Filament\Http\Middleware\AuthenticateSession
+            Γçé Illuminate\Foundation\Http\Middleware\PreventRequestForgery
+            Γçé Illuminate\Routing\Middleware\SubstituteBindings
+            Γçé Filament\Http\Middleware\DisableBladeIconComponents
+            Γçé Filament\Http\Middleware\DispatchServingFilamentEvent
+  GET|HEAD  admin/poultries/{record} filament.admin.resources.poultries.view ΓÇ║ App\Filament\Resources\Poultries\Pages\ViewPoultry
+            Γçé Filament\Http\Middleware\SetUpPanel:admin
+            Γçé Illuminate\Cookie\Middleware\EncryptCookies
+            Γçé Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse
+            Γçé Illuminate\Session\Middleware\StartSession
+            Γçé Illuminate\View\Middleware\ShareErrorsFromSession
+            Γçé Filament\Http\Middleware\Authenticate
+            Γçé Filament\Http\Middleware\AuthenticateSession
+            Γçé Illuminate\Foundation\Http\Middleware\PreventRequestForgery
+            Γçé Illuminate\Routing\Middleware\SubstituteBindings
+            Γçé Filament\Http\Middleware\DisableBladeIconComponents
+            Γçé Filament\Http\Middleware\DispatchServingFilamentEvent
+  GET|HEAD  admin/poultries/{record}/edit filament.admin.resources.poultries.edit ΓÇ║ App\Filament\Resources\Poultries\Pages\EditPoultry
+            Γçé Filament\Http\Middleware\SetUpPanel:admin
+            Γçé Illuminate\Cookie\Middleware\EncryptCookies
+            Γçé Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse
+            Γçé Illuminate\Session\Middleware\StartSession
+            Γçé Illuminate\View\Middleware\ShareErrorsFromSession
+            Γçé Filament\Http\Middleware\Authenticate
+            Γçé Filament\Http\Middleware\AuthenticateSession
+            Γçé Illuminate\Foundation\Http\Middleware\PreventRequestForgery
+            Γçé Illuminate\Routing\Middleware\SubstituteBindings
+            Γçé Filament\Http\Middleware\DisableBladeIconComponents
+            Γçé Filament\Http\Middleware\DispatchServingFilamentEvent
+  GET|HEAD  filament/exports/{export}/download filament.exports.download ΓÇ║ Filament\Actions ΓÇ║ DownloadExport
+            Γçé filament.actions
+  GET|HEAD  filament/imports/{import}/failed-rows/download filament.imports.failed-rows.download ΓÇ║ Filament\Actions ΓÇ║ DownloadImportFailureCsv
+            Γçé filament.actions
+  GET|HEAD  livewire-b98bae1d/css/{component}.css vendor/livewire/livewire/src/Features/SupportCssModules/SupportCssModules.php:16
+  GET|HEAD  livewire-b98bae1d/css/{component}.global.css vendor/livewire/livewire/src/Features/SupportCssModules/SupportCssModules.php:49
+  GET|HEAD  livewire-b98bae1d/js/{component}.js vendor/livewire/livewire/src/Features/SupportJsModules/SupportJsModules.php:24
+  GET|HEAD  livewire-b98bae1d/livewire.csp.min.js.map Livewire\Mechanisms ΓÇ║ FrontendAssets@cspMaps
+  GET|HEAD  livewire-b98bae1d/livewire.js Livewire\Mechanisms ΓÇ║ FrontendAssets@returnJavaScriptAsFile
+  GET|HEAD  livewire-b98bae1d/livewire.min.js.map Livewire\Mechanisms ΓÇ║ FrontendAssets@maps
+  GET|HEAD  livewire-b98bae1d/preview-file/{filename} livewire.preview-file ΓÇ║ Livewire\Features ΓÇ║ FilePreviewController@handle
+            Γçé web
+  POST      livewire-b98bae1d/update default-livewire.update ΓÇ║ Livewire\Mechanisms ΓÇ║ HandleRequests@handleUpdate
+            Γçé web
+            Γçé Livewire\Mechanisms\HandleRequests\RequireLivewireHeaders
+  POST      livewire-b98bae1d/upload-file livewire.upload-file ΓÇ║ Livewire\Features ΓÇ║ FileUploadController@handle
+            Γçé web
+            Γçé Illuminate\Routing\Middleware\ThrottleRequests:60,1
+  GET|HEAD  storage/{path} storage.local ΓÇ║ vendor/laravel/framework/src/Illuminate/Filesystem/FilesystemServiceProvider.php:111
+  PUT       storage/{path} storage.local.upload ΓÇ║ vendor/laravel/framework/src/Illuminate/Filesystem/FilesystemServiceProvider.php:119
+  GET|HEAD  up ........................... Illuminate\Foundation ΓÇ║ HealthCheck
+
+                                                           Showing [23] routes
+
+
+
+
+==========================================================================================
+DATABASE MIGRATION STATUS
+==========================================================================================
+
+  Migration name .............................................. Batch / Status  
+  0001_01_01_000000_create_users_table ............................... [1] Ran  
+  0001_01_01_000001_create_cache_table ............................... [1] Ran  
+  0001_01_01_000002_create_jobs_table ................................ [1] Ran  
+  2026_11_12_142513_create_farm_settings_table ....................... [2] Ran  
+  2026_11_12_143706_add_role_and_is_active_to_users_table ............ [3] Ran  
+  2026_11_15_183649_create_poultries_table ........................... [4] Ran  
+
+
+
+
+==========================================================================================
+DIRECT COMPOSER DEPENDENCIES
+==========================================================================================
+fakerphp/faker       1.24.1  Faker is a PHP library that generates fake da...
+filament/filament    5.11.2  An open-source framework for building polishe...
+laravel/framework    13.42.0 The Laravel Framework.
+laravel/pail         1.3.0   Easily delve into your Laravel application's ...
+laravel/pint         1.32.3  An opinionated code formatter for PHP.
+laravel/tinker       3.1.0   Powerful REPL for the Laravel framework.
+mockery/mockery      1.6.15  Mockery is a simple yet flexible PHP mock obj...
+nunomaduro/collision 8.9.6   Cli error handling for console/command-line P...
+phpunit/phpunit      12.5.43 The PHP Unit Testing framework.
+
+
+
+==========================================================================================
+NPM DIRECT DEPENDENCIES
+==========================================================================================
+nature-agro@ E:\4- Web Development Project\nature-agro
+Γö£ΓöÇΓöÇ @tailwindcss/vite@4.3.5
+Γö£ΓöÇΓöÇ axios@1.21.1
+Γö£ΓöÇΓöÇ concurrently@9.2.5
+Γö£ΓöÇΓöÇ laravel-vite-plugin@2.1.0
+Γö£ΓöÇΓöÇ tailwindcss@4.3.5
+ΓööΓöÇΓöÇ vite@7.3.8
+
+
+
+
+==========================================================================================
+FILE INVENTORY: app
+==========================================================================================
+E:\4- Web Development Project\nature-agro\app\Filament\Pages\FarmSettings.php
+E:\4- Web Development Project\nature-agro\app\Filament\Resources\Poultries\PoultryResource.php
+E:\4- Web Development Project\nature-agro\app\Filament\Resources\Poultries\Pages\CreatePoultry.php
+E:\4- Web Development Project\nature-agro\app\Filament\Resources\Poultries\Pages\EditPoultry.php
+E:\4- Web Development Project\nature-agro\app\Filament\Resources\Poultries\Pages\ListPoultries.php
+E:\4- Web Development Project\nature-agro\app\Filament\Resources\Poultries\Pages\ViewPoultry.php
+E:\4- Web Development Project\nature-agro\app\Filament\Resources\Poultries\Schemas\PoultryForm.php
+E:\4- Web Development Project\nature-agro\app\Filament\Resources\Poultries\Schemas\PoultryInfolist.php
+E:\4- Web Development Project\nature-agro\app\Filament\Resources\Poultries\Tables\PoultriesTable.php
+E:\4- Web Development Project\nature-agro\app\Filament\Widgets\FarmOverviewWidget.php
+E:\4- Web Development Project\nature-agro\app\Http\Controllers\Controller.php
+E:\4- Web Development Project\nature-agro\app\Models\FarmSetting.php
+E:\4- Web Development Project\nature-agro\app\Models\Poultry.php
+E:\4- Web Development Project\nature-agro\app\Models\User.php
+E:\4- Web Development Project\nature-agro\app\Providers\AppServiceProvider.php
+E:\4- Web Development Project\nature-agro\app\Providers\Filament\AdminPanelProvider.php
+
+
+==========================================================================================
+FILE INVENTORY: routes
+==========================================================================================
+E:\4- Web Development Project\nature-agro\routes\console.php
+E:\4- Web Development Project\nature-agro\routes\web.php
+
+
+==========================================================================================
+FILE INVENTORY: database
+==========================================================================================
+E:\4- Web Development Project\nature-agro\database\.gitignore
+E:\4- Web Development Project\nature-agro\database\database.sqlite
+E:\4- Web Development Project\nature-agro\database\factories\UserFactory.php
+E:\4- Web Development Project\nature-agro\database\migrations\0001_01_01_000000_create_users_table.php
+E:\4- Web Development Project\nature-agro\database\migrations\0001_01_01_000001_create_cache_table.php
+
