@@ -1,8 +1,8 @@
-﻿
+
 # --------------------------------------------------
 # 1. PHP Base Image
 # --------------------------------------------------
-FROM php:8.3-cli-bookworm AS php-base
+FROM php:8.4-cli-bookworm AS php-base
 
 WORKDIR /var/www/html
 
@@ -92,3 +92,4 @@ ENV LOG_CHANNEL=stderr
 EXPOSE 10000
 
 CMD ["sh", "-c", "php artisan serve --host=0.0.0.0 --port=${PORT:-10000}"]
+
