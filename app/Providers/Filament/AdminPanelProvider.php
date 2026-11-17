@@ -28,7 +28,7 @@ class AdminPanelProvider extends PanelProvider
             ->id('admin')
             ->path('admin')
             ->brandName('Nature Agro')
-            ->brandLogo('/storage/farm-logos/Nature Agro Green Horizon Logo.png')
+            ->brandLogo('/images/nature-agro-logo.png')
             ->brandLogoHeight('4rem')
             ->viteTheme('resources/css/filament/admin/theme.css')
             ->login()
