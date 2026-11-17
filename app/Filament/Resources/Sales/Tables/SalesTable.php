@@ -3,6 +3,7 @@
 namespace App\Filament\Resources\Sales\Tables;
 
 use App\Models\Sale;
+use App\Support\SafeDeleteAction;
 use Filament\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
@@ -39,7 +40,11 @@ class SalesTable
                 TextColumn::make('product_type')
                     ->label('Product')
                     ->badge()
-                    ->formatStateUsing(fn (string $state): string => str($state)->replace('_', ' ')->title()->toString()),
+                    ->formatStateUsing(fn (string $state): string => match ($state) {
+                        Sale::PRODUCT_EGG => 'Eggs',
+                        Sale::PRODUCT_CHICK => 'Hatch-batch chickens',
+                        default => str($state)->replace('_', ' ')->title()->toString(),
+                    }),
 
                 TextColumn::make('stock_source')
                     ->label('Stock Source')
@@ -87,10 +92,7 @@ class SalesTable
                     ->label('Product')
                     ->options([
                         Sale::PRODUCT_EGG => 'Eggs',
-                        Sale::PRODUCT_PARENT_HEN => 'Parent Hens',
-                        Sale::PRODUCT_PARENT_ROOSTER => 'Parent Roosters',
-                        Sale::PRODUCT_POULTRY => 'Poultry Inventory',
-                        Sale::PRODUCT_CHICK => 'Chicks',
+                        Sale::PRODUCT_CHICK => 'Hatch-batch chickens',
                     ]),
 
                 SelectFilter::make('payment_status')
@@ -102,6 +104,7 @@ class SalesTable
             ])
             ->recordActions([
                 ViewAction::make(),
+                SafeDeleteAction::make('sale'),
             ])
             ->defaultSort('sold_on', 'desc');
     }

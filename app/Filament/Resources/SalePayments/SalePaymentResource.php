@@ -12,13 +12,15 @@ use Filament\Tables\Table;
 
 class SalePaymentResource extends Resource
 {
+    protected static bool $shouldRegisterNavigation = false;
+
     protected static ?string $model = SalePayment::class;
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedBanknotes;
 
     protected static ?string $navigationLabel = 'Payment Ledger';
 
-    protected static string|\UnitEnum|null $navigationGroup = 'Finance';
+    protected static string|\UnitEnum|null $navigationGroup = 'Sales & Customers';
 
     protected static ?int $navigationSort = 10;
 

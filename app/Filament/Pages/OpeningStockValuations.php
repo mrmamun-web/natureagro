@@ -5,24 +5,23 @@ namespace App\Filament\Pages;
 use App\Models\ChickBatch;
 use App\Models\EggStock;
 use App\Models\IncubationBatch;
-use App\Models\ParentFlock;
 use App\Models\Poultry;
 use App\Services\InventoryCostService;
 use Filament\Notifications\Notification;
 use Filament\Pages\Page;
 use Illuminate\Support\Facades\Validator;
-use Illuminate\Validation\ValidationException;
-use Illuminate\Support\Facades\DB;
 
 class OpeningStockValuations extends Page
 {
+    protected static bool $shouldRegisterNavigation = false;
+
     protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-scale';
 
     protected static ?string $navigationLabel = 'Opening Stock Valuation';
 
     protected static ?int $navigationSort = 20;
 
-    protected static string|\UnitEnum|null $navigationGroup = 'Finance';
+    protected static string|\UnitEnum|null $navigationGroup = 'Finance & Reports';
 
     protected static ?string $title = 'Value Existing Inventory';
 
@@ -30,33 +29,11 @@ class OpeningStockValuations extends Page
 
     public array $openingCosts = [];
 
-    public array $openingEggUnitsPerHen = [];
-
     protected function getViewData(): array
     {
         $costs = app(InventoryCostService::class);
-        $defaultEggUnitsPerHen = (int) DB::table('inventory_costing_settings')->where('id', 1)->value('lifetime_good_eggs_per_hen');
 
         return [
-            'defaultEggUnitsPerHen' => $defaultEggUnitsPerHen,
-            'parentFlocks' => ParentFlock::query()->get()
-                ->flatMap(function (ParentFlock $flock) use ($costs, $defaultEggUnitsPerHen): array {
-                    $items = [];
-                    foreach (['male', 'female'] as $gender) {
-                        $quantity = $gender === 'male' ? $flock->current_male_quantity : $flock->current_female_quantity;
-                        if ($quantity > 0 && $costs->needsOpeningValuation('parent_flock', $flock->id, $gender)) {
-                            $items[] = [
-                                'id' => $flock->id,
-                                'name' => $flock->name,
-                                'gender' => $gender,
-                                'quantity' => $quantity,
-                                'default_egg_units_per_hen' => $defaultEggUnitsPerHen,
-                            ];
-                        }
-                    }
-
-                    return $items;
-                }),
             'chickBatches' => ChickBatch::query()->where('current_quantity', '>', 0)->orderBy('hatch_date')->get()
                 ->filter(fn (ChickBatch $batch): bool => $costs->needsOpeningValuation('chick_batch', $batch->id))
                 ->map(fn (ChickBatch $batch): array => ['id' => $batch->id, 'name' => $batch->batch_code.' · '.$batch->name, 'quantity' => $batch->current_quantity]),
@@ -70,27 +47,6 @@ class OpeningStockValuations extends Page
                 ->filter(fn (IncubationBatch $batch): bool => $costs->needsOpeningValuation('incubation_batch', $batch->id))
                 ->map(fn (IncubationBatch $batch): array => ['id' => $batch->id, 'name' => $batch->batch_code, 'quantity' => $batch->eggs_set]),
         ];
-    }
-
-    public function valueParentFlock(int $id, string $gender): void
-    {
-        if (! in_array($gender, ['male', 'female'], true)) {
-            throw ValidationException::withMessages(['openingCosts.parent_flock' => 'Select a valid flock inventory.']);
-        }
-
-        $productionUnitsPerUnit = null;
-        if ($gender === 'female') {
-            $default = DB::table('inventory_costing_settings')->where('id', 1)->value('lifetime_good_eggs_per_hen');
-            $expectedEggsPerHen = data_get($this->openingEggUnitsPerHen, $id);
-            $validated = Validator::make([
-                'production_units_per_unit' => filled($expectedEggsPerHen) ? $expectedEggsPerHen : $default,
-            ], [
-                'production_units_per_unit' => ['required', 'integer', 'min:1', 'max:1000000'],
-            ])->validate();
-            $productionUnitsPerUnit = (float) $validated['production_units_per_unit'];
-        }
-
-        $this->value('parent_flock', $id, 'parent_flock', $id, $gender, $productionUnitsPerUnit);
     }
 
     public function valueChickBatch(int $id): void
@@ -118,13 +74,8 @@ class OpeningStockValuations extends Page
         int $inputId,
         string $stockType,
         int $stockId,
-        ?string $gender = null,
-        ?float $productionUnitsPerUnit = null,
-    ): void
-    {
-        $path = $gender === null
-            ? $inputGroup.'.'.$inputId
-            : $inputGroup.'.'.$inputId.'.'.$gender;
+    ): void {
+        $path = $inputGroup.'.'.$inputId;
         $property = 'openingCosts.'.$path;
         $validated = Validator::make($this->all(), [
             $property => ['required', 'numeric', 'min:0', 'max:9999999999.99'],
@@ -133,10 +84,10 @@ class OpeningStockValuations extends Page
         app(InventoryCostService::class)->valueOpeningStock(
             $stockType,
             $stockId,
-            $gender,
+            null,
             (float) data_get($validated, $property),
             today()->toDateString(),
-            $productionUnitsPerUnit,
+            null,
         );
 
         data_set($this->openingCosts, $path, null);

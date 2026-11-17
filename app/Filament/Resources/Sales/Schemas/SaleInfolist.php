@@ -19,7 +19,14 @@ class SaleInfolist
                         TextEntry::make('invoice_number')->label('Invoice')->copyable(),
                         TextEntry::make('sold_on')->label('Sale Date')->date('d M Y'),
                         TextEntry::make('customer.name')->label('Customer')->placeholder('Walk-in customer'),
-                        TextEntry::make('product_type')->label('Product')->badge(),
+                        TextEntry::make('product_type')
+                            ->label('Product')
+                            ->badge()
+                            ->formatStateUsing(fn (string $state): string => match ($state) {
+                                Sale::PRODUCT_EGG => 'Eggs',
+                                Sale::PRODUCT_CHICK => 'Hatch-batch chickens',
+                                default => str($state)->replace('_', ' ')->title()->toString(),
+                            }),
                         TextEntry::make('parentFlock.name')
                             ->label('Parent flock')
                             ->visible(fn (Sale $record): bool => in_array($record->product_type, [

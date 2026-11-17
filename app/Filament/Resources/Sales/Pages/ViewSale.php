@@ -5,6 +5,7 @@ namespace App\Filament\Resources\Sales\Pages;
 use App\Filament\Resources\Sales\SaleResource;
 use App\Services\SaleService;
 use Filament\Actions\Action;
+use Filament\Facades\Filament;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
@@ -19,6 +20,14 @@ class ViewSale extends ViewRecord
     protected function getHeaderActions(): array
     {
         return [
+            Action::make('printInvoice')
+                ->label('Print invoice PDF')
+                ->icon('heroicon-o-printer')
+                ->url(fn (): string => Filament::getPanel('admin')->route('sales.invoice', [
+                    'sale' => $this->getRecord(),
+                ]))
+                ->openUrlInNewTab(),
+
             Action::make('recordPayment')
                 ->label('Record Payment')
                 ->icon('heroicon-o-banknotes')

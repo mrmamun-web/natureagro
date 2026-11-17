@@ -4,10 +4,11 @@ namespace App\Filament\Resources\FlockDailyRecords\Schemas;
 
 use App\Models\ParentFlock;
 use Filament\Forms\Components\DatePicker;
+use Filament\Forms\Components\Placeholder;
 use Filament\Forms\Components\Select;
-use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Components\Section;
+use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Schema;
 
 class FlockDailyRecordForm
@@ -16,10 +17,11 @@ class FlockDailyRecordForm
     {
         return $schema
             ->components([
-                Section::make('Flock & record date')
+                Section::make('Daily egg and flock update')
+                    ->description("Record the day's egg count and any parent birds lost.")
                     ->schema([
                         Select::make('parent_flock_id')
-                            ->label('Parent Flock')
+                            ->label('Parent flock')
                             ->options(fn (): array => ParentFlock::query()
                                 ->active()
                                 ->orderBy('name')
@@ -29,19 +31,14 @@ class FlockDailyRecordForm
                             ->required(),
 
                         DatePicker::make('recorded_on')
-                            ->label('Record Date')
+                            ->label('Date')
                             ->default(now()->toDateString())
                             ->maxDate(now())
                             ->native(false)
                             ->required(),
-                    ])
-                    ->columns(2),
 
-                Section::make('Daily production & mortality')
-                    ->description('Mortality is deducted from the flock stock when this record is saved.')
-                    ->schema([
                         TextInput::make('male_mortality')
-                            ->label('Male Mortality')
+                            ->label('Male birds lost')
                             ->numeric()
                             ->integer()
                             ->minValue(0)
@@ -49,7 +46,7 @@ class FlockDailyRecordForm
                             ->required(),
 
                         TextInput::make('female_mortality')
-                            ->label('Female Mortality')
+                            ->label('Female birds lost')
                             ->numeric()
                             ->integer()
                             ->minValue(0)
@@ -57,45 +54,28 @@ class FlockDailyRecordForm
                             ->required(),
 
                         TextInput::make('good_eggs')
-                            ->label('Good Eggs')
+                            ->label('Good eggs')
                             ->numeric()
                             ->integer()
                             ->minValue(0)
                             ->default(0)
+                            ->live()
                             ->required(),
 
                         TextInput::make('damaged_eggs')
-                            ->label('Damaged Eggs')
+                            ->label('Damaged eggs')
                             ->numeric()
                             ->integer()
                             ->minValue(0)
                             ->default(0)
+                            ->live()
                             ->required(),
 
-                        TextInput::make('feed_consumed_kg')
-                            ->label('Feed Consumed (kg)')
-                            ->numeric()
-                            ->minValue(0)
-                            ->default(0)
-                            ->required(),
-                    ])
-                    ->columns(2),
-
-                Section::make('Health & notes')
-                    ->schema([
-                        Select::make('health_status')
-                            ->label('Health Status')
-                            ->options([
-                                ParentFlock::HEALTHY => 'Healthy',
-                                ParentFlock::HEALTH_MONITORING => 'Needs Monitoring',
-                                ParentFlock::HEALTH_CRITICAL => 'Critical',
-                            ])
-                            ->default(ParentFlock::HEALTHY)
-                            ->required(),
-
-                        Textarea::make('notes')
-                            ->label('Notes')
-                            ->rows(3)
+                        Placeholder::make('total_eggs_preview')
+                            ->label('Total eggs collected')
+                            ->content(fn (Get $get): string => number_format(
+                                (int) $get('good_eggs') + (int) $get('damaged_eggs'),
+                            ))
                             ->columnSpanFull(),
                     ])
                     ->columns(2),

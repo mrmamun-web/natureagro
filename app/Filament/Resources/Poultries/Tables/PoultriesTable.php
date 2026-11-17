@@ -3,6 +3,7 @@
 namespace App\Filament\Resources\Poultries\Tables;
 
 use App\Models\Poultry;
+use App\Support\SafeDeleteAction;
 use Filament\Actions\EditAction;
 use Filament\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
@@ -94,6 +95,7 @@ class PoultriesTable
             ->recordActions([
                 ViewAction::make(),
                 EditAction::make(),
+                SafeDeleteAction::make('poultry record'),
             ])
             ->defaultSort('created_at', 'desc');
     }

@@ -6,11 +6,11 @@ use App\Models\ChickBatch;
 use App\Models\ParentFlock;
 use App\Models\SupplyProduct;
 use App\Models\SupplyUsage;
+use App\Support\SafeDeleteAction;
 use BackedEnum;
 use Filament\Actions\ViewAction;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Select;
-use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Resources\Resource;
@@ -24,13 +24,15 @@ use Filament\Tables\Table;
 
 class SupplyUsageResource extends Resource
 {
+    protected static bool $shouldRegisterNavigation = false;
+
     protected static ?string $model = SupplyUsage::class;
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedBeaker;
 
-    protected static ?string $navigationLabel = 'Feed & Medicine Usage';
+    protected static ?string $navigationLabel = 'Feed & Medicine Use';
 
-    protected static string|\UnitEnum|null $navigationGroup = 'Farm Operations';
+    protected static string|\UnitEnum|null $navigationGroup = 'Feed & Expenses';
 
     protected static ?int $navigationSort = 33;
 
@@ -39,57 +41,35 @@ class SupplyUsageResource extends Resource
     public static function form(Schema $schema): Schema
     {
         return $schema->components([
-            Section::make('Record inventory consumption')->columns(2)->schema([
-                Select::make('supply_product_id')
-                    ->label('Feed or medicine')
-                    ->options(fn (): array => SupplyProduct::query()->where('is_active', true)->orderBy('name')->get()->mapWithKeys(fn (SupplyProduct $product): array => [
-                        $product->id => $product->name.' ('.ucfirst($product->type).')',
-                    ])->all())
-                    ->searchable()->live()->required(),
-                Select::make('usage_type')
-                    ->label('Record type')
-                    ->options(fn (Get $get): array => SupplyProduct::query()->find($get('supply_product_id'))?->type === SupplyProduct::TYPE_MEDICINE
-                        ? ['treatment' => 'Treatment', 'vaccination' => 'Vaccination']
-                        : ['feed_consumption' => 'Feed consumption'])
-                    ->visible(fn (Get $get): bool => SupplyProduct::query()->find($get('supply_product_id'))?->type === SupplyProduct::TYPE_MEDICINE)
-                    ->live(),
-                TextInput::make('diagnosis')
-                    ->label('Disease / diagnosis')
-                    ->maxLength(150)
-                    ->visible(fn (Get $get): bool => SupplyProduct::query()->find($get('supply_product_id'))?->type === SupplyProduct::TYPE_MEDICINE),
-                TextInput::make('dosage')
-                    ->label('Dosage')
-                    ->maxLength(100)
-                    ->required(fn (Get $get): bool => $get('usage_type') === 'vaccination')
-                    ->visible(fn (Get $get): bool => SupplyProduct::query()->find($get('supply_product_id'))?->type === SupplyProduct::TYPE_MEDICINE),
-                TextInput::make('administered_by')
-                    ->label('Administered by')
-                    ->maxLength(100)
-                    ->visible(fn (Get $get): bool => SupplyProduct::query()->find($get('supply_product_id'))?->type === SupplyProduct::TYPE_MEDICINE),
-                DatePicker::make('next_dose_on')
-                    ->label('Next vaccination date (optional)')
-                    ->minDate(fn (Get $get): ?string => $get('used_on'))
-                    ->visible(fn (Get $get): bool => $get('usage_type') === 'vaccination'),
-                DatePicker::make('used_on')->default(today())->required()->maxDate(today()),
-                Select::make('source_type')->label('Usage for')->required()->options([
-                    'parent_flock' => 'Parent flock',
-                    'chick_batch' => 'Chick batch',
-                ])->live(),
-                TextInput::make('quantity')->numeric()->minValue(0.001)->step(0.001)->required(),
-                Select::make('parent_flock_id')
-                    ->label('Parent flock')
-                    ->options(fn (): array => ParentFlock::query()->where('status', ParentFlock::STATUS_ACTIVE)->orderBy('name')->pluck('name', 'id')->all())
-                    ->searchable()->visible(fn (Get $get): bool => $get('source_type') === 'parent_flock')
-                    ->required(fn (Get $get): bool => $get('source_type') === 'parent_flock'),
-                Select::make('chick_batch_id')
-                    ->label('Chick batch')
-                    ->options(fn (): array => ChickBatch::query()->where('status', ChickBatch::STATUS_ACTIVE)->orderBy('hatch_date')->get()->mapWithKeys(fn (ChickBatch $batch): array => [
-                        $batch->id => $batch->batch_code.' — '.$batch->name,
-                    ])->all())
-                    ->searchable()->visible(fn (Get $get): bool => $get('source_type') === 'chick_batch')
-                    ->required(fn (Get $get): bool => $get('source_type') === 'chick_batch'),
-                Textarea::make('notes')->rows(2)->columnSpanFull(),
-            ]),
+            Section::make('Feed or medicine used')
+                ->description('Record the quantity used for a parent flock or chick batch.')
+                ->columns(2)
+                ->schema([
+                    Select::make('supply_product_id')
+                        ->label('Feed or medicine')
+                        ->options(fn (): array => SupplyProduct::query()->where('is_active', true)->orderBy('name')->get()->mapWithKeys(fn (SupplyProduct $product): array => [
+                            $product->id => $product->name.' ('.ucfirst($product->type).')',
+                        ])->all())
+                        ->searchable()->live()->required(),
+                    DatePicker::make('used_on')->label('Date')->default(today())->required()->maxDate(today()),
+                    Select::make('source_type')->label('Usage for')->required()->options([
+                        'parent_flock' => 'Parent flock',
+                        'chick_batch' => 'Chick batch',
+                    ])->live(),
+                    TextInput::make('quantity')->numeric()->minValue(0.001)->step(0.001)->required(),
+                    Select::make('parent_flock_id')
+                        ->label('Parent flock')
+                        ->options(fn (): array => ParentFlock::query()->where('status', ParentFlock::STATUS_ACTIVE)->orderBy('name')->pluck('name', 'id')->all())
+                        ->searchable()->visible(fn (Get $get): bool => $get('source_type') === 'parent_flock')
+                        ->required(fn (Get $get): bool => $get('source_type') === 'parent_flock'),
+                    Select::make('chick_batch_id')
+                        ->label('Chick batch')
+                        ->options(fn (): array => ChickBatch::query()->where('status', ChickBatch::STATUS_ACTIVE)->orderBy('hatch_date')->get()->mapWithKeys(fn (ChickBatch $batch): array => [
+                            $batch->id => $batch->batch_code.' — '.$batch->name,
+                        ])->all())
+                        ->searchable()->visible(fn (Get $get): bool => $get('source_type') === 'chick_batch')
+                        ->required(fn (Get $get): bool => $get('source_type') === 'chick_batch'),
+                ]),
         ]);
     }
 
@@ -128,15 +108,14 @@ class SupplyUsageResource extends Resource
         ])->filters([
             SelectFilter::make('supply_product_id')->label('Product')->relationship('product', 'name')->searchable(),
         ])->defaultSort('used_on', 'desc')
-            ->recordActions([ViewAction::make()]);
+            ->recordActions([
+                ViewAction::make(),
+                SafeDeleteAction::make('feed or medicine usage'),
+            ]);
     }
 
     public static function getPages(): array
     {
-        return [
-            'index' => Pages\ListSupplyUsages::route('/'),
-            'create' => Pages\CreateSupplyUsage::route('/create'),
-            'view' => Pages\ViewSupplyUsage::route('/{record}'),
-        ];
+        return [];
     }
 }

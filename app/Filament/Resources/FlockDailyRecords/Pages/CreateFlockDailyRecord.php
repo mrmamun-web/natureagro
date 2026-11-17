@@ -43,6 +43,7 @@ class CreateFlockDailyRecord extends CreateRecord
 
             $maleMortality = (int) $data['male_mortality'];
             $femaleMortality = (int) $data['female_mortality'];
+            $healthStatus = $data['health_status'] ?? $flock->health_status;
 
             if ($maleMortality > $flock->current_male_quantity) {
                 throw ValidationException::withMessages([
@@ -58,10 +59,11 @@ class CreateFlockDailyRecord extends CreateRecord
 
             $flock->current_male_quantity -= $maleMortality;
             $flock->current_female_quantity -= $femaleMortality;
-            $flock->health_status = $data['health_status'];
+            $flock->health_status = $healthStatus;
             $flock->save();
 
             $data['eggs_collected'] = (int) $data['good_eggs'] + (int) $data['damaged_eggs'];
+            $data['health_status'] = $healthStatus;
             $record = $flock->dailyRecords()->create($data);
             app(EggInventoryService::class)->recordCollection($record);
             $costs = app(InventoryCostService::class);

@@ -18,7 +18,6 @@ class ParentFlockInfolist
                         TextEntry::make('flock_code')->label('Flock Code')->copyable(),
                         TextEntry::make('name')->label('Flock Name'),
                         TextEntry::make('breed')->label('Breed')->placeholder('Not specified'),
-                        TextEntry::make('purchase_date')->label('Purchase Date')->date('d M Y')->placeholder('Not specified'),
                     ]),
 
                 Section::make('Population')

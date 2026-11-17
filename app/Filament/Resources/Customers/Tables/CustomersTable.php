@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\Customers\Tables;
 
+use App\Support\SafeDeleteAction;
 use Filament\Actions\EditAction;
 use Filament\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
@@ -42,6 +43,7 @@ class CustomersTable
             ->recordActions([
                 ViewAction::make(),
                 EditAction::make(),
+                SafeDeleteAction::make('customer'),
             ])
             ->defaultSort('name');
     }

@@ -5,12 +5,10 @@ namespace App\Filament\Resources\Sales\Schemas;
 use App\Models\ChickBatch;
 use App\Models\Customer;
 use App\Models\ParentFlock;
-use App\Models\Poultry;
 use App\Models\Sale;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Placeholder;
 use Filament\Forms\Components\Select;
-use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\Utilities\Get;
@@ -42,51 +40,28 @@ class SaleForm
                             ->label('Product')
                             ->options([
                                 Sale::PRODUCT_EGG => 'Eggs',
-                                Sale::PRODUCT_PARENT_HEN => 'Parent Hens',
-                                Sale::PRODUCT_PARENT_ROOSTER => 'Parent Roosters',
-                                Sale::PRODUCT_POULTRY => 'Poultry Inventory',
-                                Sale::PRODUCT_CHICK => 'Chicks',
+                                Sale::PRODUCT_CHICK => 'Batch Chickens',
                             ])
                             ->live()
                             ->required(),
 
                         Select::make('parent_flock_id')
-                            ->label('Parent Flock / Egg Source')
+                            ->label('Egg stock from parent flock')
                             ->options(fn (): array => ParentFlock::query()->active()->orderBy('name')->pluck('name', 'id')->all())
                             ->searchable()
-                            ->visible(fn (Get $get): bool => in_array($get('product_type'), [
-                                Sale::PRODUCT_EGG,
-                                Sale::PRODUCT_PARENT_HEN,
-                                Sale::PRODUCT_PARENT_ROOSTER,
-                            ], true))
-                            ->required(fn (Get $get): bool => in_array($get('product_type'), [
-                                Sale::PRODUCT_EGG,
-                                Sale::PRODUCT_PARENT_HEN,
-                                Sale::PRODUCT_PARENT_ROOSTER,
-                            ], true)),
-
-                        Select::make('poultry_id')
-                            ->label('Poultry Record')
-                            ->options(fn (): array => Poultry::query()
-                                ->active()
-                                ->orderBy('name')
-                                ->get()
-                                ->mapWithKeys(fn (Poultry $poultry): array => [
-                                    $poultry->id => $poultry->name.' ('.ucfirst($poultry->type).', '.$poultry->current_quantity.' available)',
-                                ])
-                                ->all())
-                            ->searchable()
-                            ->visible(fn (Get $get): bool => $get('product_type') === Sale::PRODUCT_POULTRY)
-                            ->required(fn (Get $get): bool => $get('product_type') === Sale::PRODUCT_POULTRY),
+                            ->visible(fn (Get $get): bool => $get('product_type') === Sale::PRODUCT_EGG)
+                            ->required(fn (Get $get): bool => $get('product_type') === Sale::PRODUCT_EGG),
 
                         Select::make('chick_batch_id')
-                            ->label('Chick Batch')
+                            ->label('Hatch Batch')
                             ->options(fn (): array => ChickBatch::query()
                                 ->where('status', ChickBatch::STATUS_ACTIVE)
-                                ->orderBy('hatch_date')
+                                ->where('source', ChickBatch::SOURCE_HATCHED)
+                                ->where('current_quantity', '>', 0)
+                                ->orderByDesc('hatch_date')
                                 ->get()
                                 ->mapWithKeys(fn (ChickBatch $batch): array => [
-                                    $batch->id => $batch->batch_code.' — '.$batch->name.' ('.$batch->current_quantity.' available)',
+                                    $batch->id => $batch->hatch_date->format('F Y').' · '.$batch->batch_code.' — '.$batch->name.' ('.$batch->current_quantity.' available)',
                                 ])
                                 ->all())
                             ->searchable()
@@ -100,10 +75,7 @@ class SaleForm
                         TextInput::make('quantity')
                             ->label(fn (Get $get): string => match ($get('product_type')) {
                                 Sale::PRODUCT_EGG => 'Egg Quantity',
-                                Sale::PRODUCT_PARENT_HEN,
-                                Sale::PRODUCT_PARENT_ROOSTER,
-                                Sale::PRODUCT_POULTRY,
-                                Sale::PRODUCT_CHICK => 'Bird Quantity',
+                                Sale::PRODUCT_CHICK => 'Chicken Quantity',
                                 default => 'Quantity',
                             })
                             ->numeric()
@@ -112,22 +84,8 @@ class SaleForm
                             ->live()
                             ->required(),
 
-                        TextInput::make('unit_weight_kg')
-                            ->label('Weight per Bird (kg, optional)')
-                            ->numeric()
-                            ->minValue(0.001)
-                            ->step(0.001)
-                            ->live()
-                            ->visible(fn (Get $get): bool => in_array($get('product_type'), [
-                                Sale::PRODUCT_PARENT_HEN,
-                                Sale::PRODUCT_PARENT_ROOSTER,
-                                Sale::PRODUCT_POULTRY,
-                            ], true)),
-
                         TextInput::make('unit_price')
-                            ->label(fn (Get $get): string => filled($get('unit_weight_kg'))
-                                ? 'Price per kg (৳)'
-                                : 'Unit Price (৳)')
+                            ->label('Unit Price (৳)')
                             ->numeric()
                             ->minValue(0.01)
                             ->step(0.01)
@@ -150,9 +108,8 @@ class SaleForm
                             ->content(function (Get $get): string {
                                 $quantity = max(0, (int) $get('quantity'));
                                 $price = max(0, (float) $get('unit_price'));
-                                $weight = max(0, (float) ($get('unit_weight_kg') ?: 1));
                                 $discount = max(0, (float) $get('discount_amount'));
-                                $total = max(0, ($quantity * $weight * $price) - $discount);
+                                $total = max(0, ($quantity * $price) - $discount);
 
                                 return '৳ '.number_format($total, 2);
                             }),
@@ -180,10 +137,6 @@ class SaleForm
                             ->default('cash')
                             ->required(fn (Get $get): bool => (float) $get('paid_amount') > 0),
 
-                        Textarea::make('notes')
-                            ->label('Notes')
-                            ->rows(2)
-                            ->columnSpanFull(),
                     ])
                     ->columns(2),
             ]);

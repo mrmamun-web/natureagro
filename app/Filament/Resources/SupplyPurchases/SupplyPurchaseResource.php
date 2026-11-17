@@ -7,6 +7,7 @@ use App\Models\Supplier;
 use App\Models\SupplyProduct;
 use App\Models\SupplyPurchase;
 use App\Services\SupplyInventoryService;
+use App\Support\SafeDeleteAction;
 use BackedEnum;
 use Filament\Actions\Action;
 use Filament\Actions\ViewAction;
@@ -32,7 +33,7 @@ class SupplyPurchaseResource extends Resource
 
     protected static ?string $navigationLabel = 'Feed & Medicine Purchases';
 
-    protected static string|\UnitEnum|null $navigationGroup = 'Farm Operations';
+    protected static string|\UnitEnum|null $navigationGroup = 'Feed & Expenses';
 
     protected static ?int $navigationSort = 32;
 
@@ -45,7 +46,13 @@ class SupplyPurchaseResource extends Resource
                 Select::make('supplier_id')
                     ->label('Supplier')
                     ->options(fn (): array => Supplier::query()->where('is_active', true)->orderBy('name')->pluck('name', 'id')->all())
-                    ->searchable()->required(),
+                    ->searchable()
+                    ->createOptionForm([
+                        TextInput::make('name')->required()->maxLength(150),
+                        TextInput::make('phone_number')->tel()->maxLength(30),
+                    ])
+                    ->createOptionUsing(fn (array $data): int => (int) Supplier::query()->create($data)->getKey())
+                    ->required(),
                 Select::make('supply_product_id')
                     ->label('Feed or medicine')
                     ->options(fn (): array => SupplyProduct::query()->where('is_active', true)->orderBy('name')->get()->mapWithKeys(fn (SupplyProduct $product): array => [
@@ -114,6 +121,7 @@ class SupplyPurchaseResource extends Resource
         ])->defaultSort('purchased_on', 'desc')
             ->recordActions([
                 ViewAction::make(),
+                SafeDeleteAction::make('feed or medicine purchase'),
                 Action::make('recordPayment')
                     ->label('Pay supplier')
                     ->icon(Heroicon::OutlinedBanknotes)

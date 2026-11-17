@@ -21,7 +21,7 @@ class FarmSettings extends Page
 
     protected static ?string $navigationLabel = 'Farm Settings';
 
-    protected static string|\UnitEnum|null $navigationGroup = 'Farm Management';
+    protected static string|\UnitEnum|null $navigationGroup = 'Reports & Settings';
 
     protected static \BackedEnum|string|null $navigationIcon = 'heroicon-o-cog-6-tooth';
 

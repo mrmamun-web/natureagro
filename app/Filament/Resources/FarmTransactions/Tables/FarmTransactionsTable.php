@@ -3,6 +3,7 @@
 namespace App\Filament\Resources\FarmTransactions\Tables;
 
 use App\Models\FarmTransaction;
+use App\Support\SafeDeleteAction;
 use Filament\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
@@ -36,7 +37,10 @@ class FarmTransactionsTable
                     FarmTransaction::EXPENSE_MISCELLANEOUS => 'Miscellaneous',
                 ]),
             ])
-            ->recordActions([ViewAction::make()])
+            ->recordActions([
+                ViewAction::make(),
+                SafeDeleteAction::make('transaction'),
+            ])
             ->defaultSort('transaction_on', 'desc');
     }
 }

@@ -3,6 +3,7 @@
 namespace App\Filament\Resources\FlockDailyRecords\Tables;
 
 use App\Models\ParentFlock;
+use App\Support\SafeDeleteAction;
 use Filament\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
@@ -71,6 +72,7 @@ class FlockDailyRecordsTable
             ])
             ->recordActions([
                 ViewAction::make(),
+                SafeDeleteAction::make('daily flock record'),
             ])
             ->defaultSort('recorded_on', 'desc');
     }

@@ -24,8 +24,11 @@ class ChickBatch extends Model
         'source',
         'source_incubation_batch_id',
         'hatch_date',
+        'batch_month',
         'initial_quantity',
         'current_quantity',
+        'survived_after_7_days',
+        'survival_recorded_on',
         'status',
         'notes',
     ];
@@ -34,14 +37,21 @@ class ChickBatch extends Model
     {
         return [
             'hatch_date' => 'date',
+            'batch_month' => 'integer',
             'initial_quantity' => 'integer',
             'current_quantity' => 'integer',
+            'survived_after_7_days' => 'integer',
+            'survival_recorded_on' => 'date',
         ];
     }
 
     protected static function booted(): void
     {
         static::creating(function (ChickBatch $batch): void {
+            if ($batch->batch_month === null && $batch->hatch_date !== null) {
+                $batch->batch_month = $batch->hatch_date->month;
+            }
+
             if (blank($batch->batch_code)) {
                 do {
                     $code = 'CHB-'.now()->format('Ymd').'-'.Str::upper(Str::random(5));
@@ -52,6 +62,11 @@ class ChickBatch extends Model
 
             $batch->current_quantity = $batch->initial_quantity;
         });
+    }
+
+    public function getBatchMonthNameAttribute(): ?string
+    {
+        return IncubationBatch::monthOptions()[$this->batch_month] ?? null;
     }
 
     public function sourceIncubationBatch(): BelongsTo

@@ -4,11 +4,11 @@ namespace App\Filament\Resources\FarmTransactions\Schemas;
 
 use App\Models\FarmTransaction;
 use Filament\Forms\Components\DatePicker;
+use Filament\Forms\Components\Hidden;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Components\Section;
-use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Schema;
 
 class FarmTransactionForm
@@ -17,30 +17,24 @@ class FarmTransactionForm
     {
         return $schema
             ->components([
-                Section::make('Transaction')
-                    ->description('Sales, feed and medicine usage are tracked separately and should not be re-entered here.')
+                Section::make('Other expense')
+                    ->description('Record costs that are not feed, medicine, or sales.')
                     ->columns(2)
                     ->schema([
-                        Select::make('transaction_type')
-                            ->label('Type')
-                            ->options([
-                                FarmTransaction::TYPE_INCOME => 'Other Income',
-                                FarmTransaction::TYPE_EXPENSE => 'Expense',
-                            ])
-                            ->live()
+                        Hidden::make('transaction_type')
+                            ->default(FarmTransaction::TYPE_EXPENSE)
                             ->required(),
 
                         Select::make('category')
                             ->label('Category')
-                            ->options(fn (Get $get): array => $get('transaction_type') === FarmTransaction::TYPE_INCOME
-                                ? [FarmTransaction::INCOME_OTHER => 'Other income']
-                                : [
-                                    FarmTransaction::EXPENSE_LABOUR => 'Labour',
-                                    FarmTransaction::EXPENSE_ELECTRICITY => 'Electricity',
-                                    FarmTransaction::EXPENSE_TRANSPORT => 'Transportation',
-                                    FarmTransaction::EXPENSE_MAINTENANCE => 'Maintenance',
-                                    FarmTransaction::EXPENSE_MISCELLANEOUS => 'Miscellaneous',
-                                ])
+                            ->options([
+                                FarmTransaction::EXPENSE_LABOUR => 'Labour',
+                                FarmTransaction::EXPENSE_ELECTRICITY => 'Electricity',
+                                FarmTransaction::EXPENSE_TRANSPORT => 'Transportation',
+                                FarmTransaction::EXPENSE_MAINTENANCE => 'Maintenance',
+                                FarmTransaction::EXPENSE_MISCELLANEOUS => 'Miscellaneous',
+                            ])
+                            ->default(FarmTransaction::EXPENSE_MISCELLANEOUS)
                             ->required(),
 
                         TextInput::make('amount')
@@ -67,6 +61,7 @@ class FarmTransactionForm
                                 'nagad' => 'Nagad',
                                 'bank' => 'Bank Transfer',
                             ])
+                            ->default('cash')
                             ->required(),
 
                         TextInput::make('reference')

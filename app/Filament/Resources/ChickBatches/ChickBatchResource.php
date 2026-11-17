@@ -2,7 +2,6 @@
 
 namespace App\Filament\Resources\ChickBatches;
 
-use App\Filament\Resources\ChickBatches\Pages\CreateChickBatch;
 use App\Filament\Resources\ChickBatches\Pages\ListChickBatches;
 use App\Filament\Resources\ChickBatches\Pages\ViewChickBatch;
 use App\Filament\Resources\ChickBatches\RelationManagers\MovementsRelationManager;
@@ -24,7 +23,7 @@ class ChickBatchResource extends Resource
 
     protected static ?string $navigationLabel = 'Chick Batches';
 
-    protected static string|\UnitEnum|null $navigationGroup = 'Farm Operations';
+    protected static string|\UnitEnum|null $navigationGroup = 'Hatching & Chicks';
 
     protected static ?int $navigationSort = 50;
 
@@ -56,7 +55,6 @@ class ChickBatchResource extends Resource
     {
         return [
             'index' => ListChickBatches::route('/'),
-            'create' => CreateChickBatch::route('/create'),
             'view' => ViewChickBatch::route('/{record}'),
         ];
     }

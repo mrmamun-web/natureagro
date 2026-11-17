@@ -21,9 +21,9 @@ class IncubationBatchResource extends Resource
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedSun;
 
-    protected static ?string $navigationLabel = 'Hatching';
+    protected static ?string $navigationLabel = 'Incubation & Hatching';
 
-    protected static string|\UnitEnum|null $navigationGroup = 'Farm Operations';
+    protected static string|\UnitEnum|null $navigationGroup = 'Hatching & Chicks';
 
     protected static ?int $navigationSort = 40;
 

@@ -23,7 +23,7 @@ class EggHatchingFlowTest extends TestCase
 
         $dailyRecord = FlockDailyRecord::query()->create([
             'parent_flock_id' => $flock->id,
-            'recorded_on' => '2026-11-15',
+            'recorded_on' => '2026-10-25',
             'male_mortality' => 0,
             'female_mortality' => 0,
             'eggs_collected' => 20,
@@ -39,8 +39,9 @@ class EggHatchingFlowTest extends TestCase
         $incubationBatch = IncubationBatch::query()->create([
             'parent_flock_id' => $flock->id,
             'eggs_set' => 15,
-            'incubated_on' => '2026-11-15',
-            'expected_hatch_on' => '2026-11-29',
+            'incubated_on' => '2026-10-25',
+            'incubation_month' => 10,
+            'expected_hatch_on' => '2026-11-15',
         ]);
 
         $inventory->reserveForIncubation($incubationBatch);
@@ -69,6 +70,25 @@ class EggHatchingFlowTest extends TestCase
             'source_incubation_batch_id' => $incubationBatch->id,
             'initial_quantity' => 12,
             'current_quantity' => 12,
+            'batch_month' => 10,
         ]);
+    }
+
+    public function test_incubation_month_options_include_every_month(): void
+    {
+        $this->assertSame([
+            1 => 'January',
+            2 => 'February',
+            3 => 'March',
+            4 => 'April',
+            5 => 'May',
+            6 => 'June',
+            7 => 'July',
+            8 => 'August',
+            9 => 'September',
+            10 => 'October',
+            11 => 'November',
+            12 => 'December',
+        ], IncubationBatch::monthOptions());
     }
 }

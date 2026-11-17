@@ -24,7 +24,7 @@ class SaleResource extends Resource
 
     protected static ?string $navigationLabel = 'Sales';
 
-    protected static string|\UnitEnum|null $navigationGroup = 'Sales & Inventory';
+    protected static string|\UnitEnum|null $navigationGroup = 'Sales & Customers';
 
     protected static ?int $navigationSort = 20;
 

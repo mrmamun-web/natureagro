@@ -12,13 +12,15 @@ use Filament\Tables\Table;
 
 class EggStockResource extends Resource
 {
+    protected static bool $shouldRegisterNavigation = false;
+
     protected static ?string $model = EggStock::class;
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedQueueList;
 
     protected static ?string $navigationLabel = 'Egg Inventory';
 
-    protected static string|\UnitEnum|null $navigationGroup = 'Farm Operations';
+    protected static string|\UnitEnum|null $navigationGroup = 'Flock & Eggs';
 
     protected static ?int $navigationSort = 30;
 

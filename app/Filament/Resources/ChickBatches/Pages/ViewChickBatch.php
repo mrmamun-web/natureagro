@@ -23,6 +23,41 @@ class ViewChickBatch extends ViewRecord
     protected function getHeaderActions(): array
     {
         return [
+            Action::make('recordSevenDaySurvival')
+                ->label('Record / edit 7-day survival')
+                ->icon('heroicon-o-check-circle')
+                ->visible(fn (): bool => today()->greaterThanOrEqualTo(
+                    $this->getRecord()->hatch_date->copy()->addDays(7),
+                ))
+                ->form([
+                    DatePicker::make('survival_recorded_on')
+                        ->label('7-day check date')
+                        ->default(fn (): string => $this->getRecord()->hatch_date->copy()->addDays(7)->toDateString())
+                        ->minDate(fn (): string => $this->getRecord()->hatch_date->copy()->addDays(7)->toDateString())
+                        ->maxDate(today())
+                        ->native(false)
+                        ->required(),
+                    TextInput::make('survived_after_7_days')
+                        ->label('Chicks alive at the 7-day check')
+                        ->numeric()
+                        ->integer()
+                        ->minValue(0)
+                        ->maxValue(fn (): int => $this->getRecord()->initial_quantity)
+                        ->required(),
+                ])
+                ->fillForm(fn (): array => [
+                    'survival_recorded_on' => $this->getRecord()->survival_recorded_on?->toDateString()
+                        ?? $this->getRecord()->hatch_date->copy()->addDays(7)->toDateString(),
+                    'survived_after_7_days' => $this->getRecord()->survived_after_7_days,
+                ])
+                ->action(function (array $data): void {
+                    $this->getRecord()->update($data);
+                    $this->record = $this->getRecord()->refresh();
+                    Notification::make()
+                        ->success()
+                        ->title('7-day chick survival saved.')
+                        ->send();
+                }),
             Action::make('recordMortality')
                 ->label('Record mortality')
                 ->icon('heroicon-o-heart')

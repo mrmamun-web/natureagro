@@ -3,6 +3,7 @@
 namespace App\Filament\Resources\SupplyProducts;
 
 use App\Models\SupplyProduct;
+use App\Support\SafeDeleteAction;
 use BackedEnum;
 use Filament\Actions\EditAction;
 use Filament\Forms\Components\Select;
@@ -24,9 +25,9 @@ class SupplyProductResource extends Resource
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedBeaker;
 
-    protected static ?string $navigationLabel = 'Feed & Medicine';
+    protected static ?string $navigationLabel = 'Feed & Medicine Setup';
 
-    protected static string|\UnitEnum|null $navigationGroup = 'Farm Operations';
+    protected static string|\UnitEnum|null $navigationGroup = 'Feed & Expenses';
 
     protected static ?int $navigationSort = 31;
 
@@ -76,7 +77,10 @@ class SupplyProductResource extends Resource
                 SupplyProduct::TYPE_FEED => 'Feed',
                 SupplyProduct::TYPE_MEDICINE => 'Medicine',
             ]),
-        ])->recordActions([EditAction::make()])->defaultSort('name');
+        ])->recordActions([
+            EditAction::make(),
+            SafeDeleteAction::make('feed or medicine product'),
+        ])->defaultSort('name');
     }
 
     public static function getPages(): array

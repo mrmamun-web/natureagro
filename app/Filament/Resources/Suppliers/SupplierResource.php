@@ -5,6 +5,7 @@ namespace App\Filament\Resources\Suppliers;
 use App\Filament\Resources\Suppliers\Pages\ViewSupplier;
 use App\Filament\Resources\Suppliers\RelationManagers\PurchasesRelationManager;
 use App\Models\Supplier;
+use App\Support\SafeDeleteAction;
 use BackedEnum;
 use Filament\Actions\EditAction;
 use Filament\Actions\ViewAction;
@@ -22,13 +23,15 @@ use Filament\Tables\Table;
 
 class SupplierResource extends Resource
 {
+    protected static bool $shouldRegisterNavigation = false;
+
     protected static ?string $model = Supplier::class;
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedTruck;
 
     protected static ?string $navigationLabel = 'Suppliers';
 
-    protected static string|\UnitEnum|null $navigationGroup = 'Farm Operations';
+    protected static string|\UnitEnum|null $navigationGroup = 'Feed & Medicine';
 
     protected static ?int $navigationSort = 30;
 
@@ -55,7 +58,11 @@ class SupplierResource extends Resource
             TextColumn::make('purchases_sum_due_amount')->sum('purchases', 'due_amount')->label('Payable due')->money('BDT')->sortable(),
             IconColumn::make('is_active')->boolean()->label('Active'),
             TextColumn::make('updated_at')->since()->label('Updated')->sortable(),
-        ])->recordActions([ViewAction::make(), EditAction::make()])->defaultSort('name');
+        ])->recordActions([
+            ViewAction::make(),
+            EditAction::make(),
+            SafeDeleteAction::make('supplier'),
+        ])->defaultSort('name');
     }
 
     public static function infolist(Schema $schema): Schema

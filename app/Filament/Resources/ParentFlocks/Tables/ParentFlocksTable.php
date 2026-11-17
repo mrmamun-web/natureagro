@@ -3,6 +3,7 @@
 namespace App\Filament\Resources\ParentFlocks\Tables;
 
 use App\Models\ParentFlock;
+use App\Support\SafeDeleteAction;
 use Filament\Actions\EditAction;
 use Filament\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
@@ -79,6 +80,7 @@ class ParentFlocksTable
             ->recordActions([
                 ViewAction::make(),
                 EditAction::make(),
+                SafeDeleteAction::make('parent flock'),
             ])
             ->defaultSort('created_at', 'desc');
     }

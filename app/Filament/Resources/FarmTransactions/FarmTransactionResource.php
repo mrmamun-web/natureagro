@@ -21,9 +21,9 @@ class FarmTransactionResource extends Resource
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedBanknotes;
 
-    protected static ?string $navigationLabel = 'Other Income & Expenses';
+    protected static ?string $navigationLabel = 'Other Expenses';
 
-    protected static string|\UnitEnum|null $navigationGroup = 'Finance';
+    protected static string|\UnitEnum|null $navigationGroup = 'Feed & Expenses';
 
     protected static ?int $navigationSort = 20;
 

@@ -7,9 +7,10 @@ use App\Models\EggInventoryMovement;
 use App\Models\EggStock;
 use App\Models\FarmTransaction;
 use App\Models\FlockDailyRecord;
-use App\Models\InventoryCostMovement;
 use App\Models\IncubationBatch;
+use App\Models\InventoryCostMovement;
 use App\Models\ParentFlock;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
 
@@ -85,12 +86,15 @@ class EggInventoryService
             $stock->reserved_for_hatching += $batch->eggs_set;
             $stock->save();
             $costs = app(InventoryCostService::class);
+            $costDate = Carbon::parse($batch->incubated_on)
+                ->max(today())
+                ->toDateString();
             $consumed = $costs->consume(
                 'egg_stock',
                 $stock->id,
                 null,
                 $batch->eggs_set,
-                $batch->incubated_on->toDateString(),
+                $costDate,
                 'incubation_reserve',
                 $batch,
                 'Eggs reserved for this incubation batch.',
@@ -100,7 +104,7 @@ class EggInventoryService
                 $batch->id,
                 null,
                 $consumed['allocations'],
-                $batch->incubated_on->toDateString(),
+                $costDate,
                 $batch,
                 'FIFO egg value transferred into incubation.',
             );
@@ -148,12 +152,22 @@ class EggInventoryService
                 ]);
             }
 
+            $reservedOn = InventoryCostMovement::query()
+                ->where('inventory_type', 'incubation_batch')
+                ->where('inventory_id', $batch->id)
+                ->whereNull('gender')
+                ->where('movement_type', 'transfer_in')
+                ->max('moved_on');
+            $costDate = Carbon::parse($data['actual_hatch_on'])
+                ->max(Carbon::parse($reservedOn ?? $batch->incubated_on))
+                ->toDateString();
+
             $consumed = app(InventoryCostService::class)->consume(
                 'incubation_batch',
                 $batch->id,
                 null,
                 $batch->eggs_set,
-                $data['actual_hatch_on'],
+                $costDate,
                 'hatch_outcome',
                 $batch,
                 'Incubation egg cost transferred to hatched chicks.',
@@ -185,7 +199,7 @@ class EggInventoryService
                         'transaction_type' => FarmTransaction::TYPE_EXPENSE,
                         'category' => 'production_loss',
                         'amount' => number_format($consumed['total_cost'], 2, '.', ''),
-                        'transaction_on' => $data['actual_hatch_on'],
+                                'transaction_on' => $data['actual_hatch_on'],
                         'reference' => $batch->batch_code,
                         'notes' => 'Incubation batch produced no chicks; FIFO egg production cost was recognized as a loss.',
                     ]);
@@ -200,6 +214,7 @@ class EggInventoryService
                 'source' => ChickBatch::SOURCE_HATCHED,
                 'source_incubation_batch_id' => $batch->id,
                 'hatch_date' => $data['actual_hatch_on'],
+                'batch_month' => $batch->incubation_month ?? Carbon::parse($data['actual_hatch_on'])->month,
                 'initial_quantity' => $hatched,
                 'status' => ChickBatch::STATUS_ACTIVE,
             ]);
@@ -210,7 +225,7 @@ class EggInventoryService
                 null,
                 $hatched,
                 $consumed['total_cost'],
-                $data['actual_hatch_on'],
+                $costDate,
                 'hatch_output',
                 $batch,
                 'Egg production and incubation cost assigned to hatched chicks.',

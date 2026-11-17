@@ -19,6 +19,7 @@ class IncubationBatchInfolist
                         TextEntry::make('parentFlock.name')->label('Egg Source Flock'),
                         TextEntry::make('eggs_set')->label('Eggs Set')->numeric(),
                         TextEntry::make('incubated_on')->label('Incubation Date')->date('d M Y'),
+                        TextEntry::make('incubation_month_name')->label('Incubation Month'),
                         TextEntry::make('expected_hatch_on')->label('Expected Hatch Date')->date('d M Y'),
                         TextEntry::make('status')->label('Status')->badge(),
                     ]),

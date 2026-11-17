@@ -3,6 +3,7 @@
 namespace App\Filament\Resources\IncubationBatches\Tables;
 
 use App\Models\IncubationBatch;
+use App\Support\SafeDeleteAction;
 use Filament\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
@@ -29,6 +30,9 @@ class IncubationBatchesTable
                     ->label('Eggs Set')
                     ->numeric()
                     ->sortable(),
+
+                TextColumn::make('incubation_month_name')
+                    ->label('Incubation Month'),
 
                 TextColumn::make('expected_hatch_on')
                     ->label('Expected Hatch')
@@ -58,6 +62,7 @@ class IncubationBatchesTable
             ])
             ->recordActions([
                 ViewAction::make(),
+                SafeDeleteAction::make('incubation batch'),
             ])
             ->defaultSort('incubated_on', 'desc');
     }

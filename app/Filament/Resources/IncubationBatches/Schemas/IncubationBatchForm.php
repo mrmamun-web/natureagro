@@ -2,14 +2,16 @@
 
 namespace App\Filament\Resources\IncubationBatches\Schemas;
 
+use App\Models\IncubationBatch;
 use App\Models\ParentFlock;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Select;
-use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\Utilities\Get;
+use Filament\Schemas\Components\Utilities\Set;
 use Filament\Schemas\Schema;
+use Illuminate\Support\Carbon;
 
 class IncubationBatchForm
 {
@@ -39,22 +41,53 @@ class IncubationBatchForm
 
                         DatePicker::make('incubated_on')
                             ->label('Incubation Date')
-                            ->default(now()->toDateString())
+                            ->default(now()->startOfMonth()->toDateString())
                             ->maxDate(now())
                             ->native(false)
+                            ->live()
+                            ->afterStateUpdated(function (?string $state, Set $set): void {
+                                if (blank($state)) {
+                                    return;
+                                }
+
+                                $incubatedOn = Carbon::parse($state)->startOfMonth();
+                                $set('incubated_on', $incubatedOn->toDateString());
+                                $set('incubation_month', $incubatedOn->month);
+                                $set('expected_hatch_on', $incubatedOn->copy()
+                                    ->addDays(IncubationBatch::HATCHING_PERIOD_DAYS)
+                                    ->toDateString());
+                            })
+                            ->required(),
+
+                        Select::make('incubation_month')
+                            ->label('Incubation Month')
+                            ->options(IncubationBatch::monthOptions())
+                            ->default(now()->month)
+                            ->live()
+                            ->afterStateUpdated(function (?string $state, Get $get, Set $set): void {
+                                if (blank($state)) {
+                                    return;
+                                }
+
+                                $year = filled($get('incubated_on'))
+                                    ? Carbon::parse($get('incubated_on'))->year
+                                    : now()->year;
+                                $incubatedOn = Carbon::createFromDate($year, (int) $state, 1);
+                                $set('incubated_on', $incubatedOn->toDateString());
+                                $set('expected_hatch_on', $incubatedOn->copy()
+                                    ->addDays(IncubationBatch::HATCHING_PERIOD_DAYS)
+                                    ->toDateString());
+                            })
+                            ->rules(['integer', 'between:1,12'])
                             ->required(),
 
                         DatePicker::make('expected_hatch_on')
                             ->label('Expected Hatch Date')
-                            ->default(now()->addDays(21)->toDateString())
+                            ->default(now()->startOfMonth()->addDays(IncubationBatch::HATCHING_PERIOD_DAYS)->toDateString())
                             ->minDate(fn (Get $get) => $get('incubated_on'))
                             ->native(false)
                             ->required(),
 
-                        Textarea::make('notes')
-                            ->label('Notes')
-                            ->rows(3)
-                            ->columnSpanFull(),
                     ])
                     ->columns(2),
             ]);

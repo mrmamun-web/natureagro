@@ -13,13 +13,15 @@ use Filament\Tables\Table;
 
 class SupplyStockMovementResource extends Resource
 {
+    protected static bool $shouldRegisterNavigation = false;
+
     protected static ?string $model = SupplyStockMovement::class;
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedArrowsRightLeft;
 
     protected static ?string $navigationLabel = 'Feed & Medicine Stock Ledger';
 
-    protected static string|\UnitEnum|null $navigationGroup = 'Farm Operations';
+    protected static string|\UnitEnum|null $navigationGroup = 'Feed & Medicine';
 
     protected static ?int $navigationSort = 34;
 

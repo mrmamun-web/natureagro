@@ -19,9 +19,15 @@ use Filament\Tables\Table;
 
 class PoultryResource extends Resource
 {
+    protected static bool $shouldRegisterNavigation = false;
+
     protected static ?string $model = Poultry::class;
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
+
+    protected static ?string $navigationLabel = 'Birds for Sale';
+
+    protected static string|\UnitEnum|null $navigationGroup = 'Sales & Customers';
 
     protected static ?int $navigationSort = 10;
 

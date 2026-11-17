@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Models\ParentFlock;
+use App\Models\ParentFlockMovement;
 use App\Models\Poultry;
 use App\Models\PoultryMovement;
 use Illuminate\Support\Facades\DB;
@@ -11,6 +12,69 @@ use Illuminate\Validation\ValidationException;
 
 class ParentFlockService
 {
+    public function updatePopulation(ParentFlock $flock, array $data): ParentFlock
+    {
+        $data = $this->validate($data, [
+            'name' => ['required', 'string', 'max:150'],
+            'breed' => ['nullable', 'string', 'max:100'],
+            'initial_male_quantity' => ['required', 'integer', 'min:0'],
+            'initial_female_quantity' => ['required', 'integer', 'min:0'],
+            'status' => ['required', 'in:active,inactive'],
+            'health_status' => ['required', 'in:healthy,monitoring,critical'],
+        ]);
+
+        if ($data['initial_male_quantity'] + $data['initial_female_quantity'] < 1) {
+            throw ValidationException::withMessages([
+                'data.initial_female_quantity' => 'A flock must have at least one bird.',
+            ]);
+        }
+
+        return DB::transaction(function () use ($flock, $data): ParentFlock {
+            $lockedFlock = ParentFlock::query()->lockForUpdate()->findOrFail($flock->id);
+            $maleDelta = $data['initial_male_quantity'] - $lockedFlock->initial_male_quantity;
+            $femaleDelta = $data['initial_female_quantity'] - $lockedFlock->initial_female_quantity;
+            $currentMales = $lockedFlock->current_male_quantity + $maleDelta;
+            $currentFemales = $lockedFlock->current_female_quantity + $femaleDelta;
+
+            if ($currentMales < 0 || $currentFemales < 0) {
+                throw ValidationException::withMessages([
+                    'data.initial_male_quantity' => 'The new opening count cannot reduce current male stock below zero.',
+                    'data.initial_female_quantity' => 'The new opening count cannot reduce current female stock below zero.',
+                ]);
+            }
+
+            $openingMovement = $lockedFlock->movements()
+                ->where('movement_type', 'opening_stock')
+                ->lockForUpdate()
+                ->first();
+
+            $lockedFlock->fill([
+                'name' => $data['name'],
+                'breed' => $data['breed'] ?? null,
+                'initial_male_quantity' => $data['initial_male_quantity'],
+                'initial_female_quantity' => $data['initial_female_quantity'],
+                'current_male_quantity' => $currentMales,
+                'current_female_quantity' => $currentFemales,
+                'status' => $data['status'],
+                'health_status' => $data['health_status'],
+            ])->save();
+
+            $openingMovement ??= new ParentFlockMovement([
+                'movement_type' => 'opening_stock',
+                'moved_on' => $lockedFlock->created_at?->toDateString() ?? today()->toDateString(),
+                'notes' => 'Opening parent flock record.',
+            ]);
+            $openingMovement->fill([
+                'quantity' => $data['initial_male_quantity'] + $data['initial_female_quantity'],
+                'male_quantity' => $data['initial_male_quantity'],
+                'female_quantity' => $data['initial_female_quantity'],
+            ]);
+            $lockedFlock->movements()->save($openingMovement);
+
+            return $lockedFlock->refresh();
+        });
+    }
+
     public function transferToPoultryInventory(ParentFlock $flock, array $data): ParentFlock
     {
         $data = $this->validate($data, [

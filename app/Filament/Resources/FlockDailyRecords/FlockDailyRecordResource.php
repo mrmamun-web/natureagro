@@ -21,9 +21,9 @@ class FlockDailyRecordResource extends Resource
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedClipboardDocumentCheck;
 
-    protected static ?string $navigationLabel = 'Daily Flock & Egg Records';
+    protected static ?string $navigationLabel = 'Daily Flock & Egg Update';
 
-    protected static string|\UnitEnum|null $navigationGroup = 'Farm Operations';
+    protected static string|\UnitEnum|null $navigationGroup = 'Flock & Eggs';
 
     protected static ?int $navigationSort = 20;
 

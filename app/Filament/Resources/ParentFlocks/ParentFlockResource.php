@@ -25,7 +25,7 @@ class ParentFlockResource extends Resource
 
     protected static ?string $navigationLabel = 'Parent Flocks';
 
-    protected static string|\UnitEnum|null $navigationGroup = 'Farm Operations';
+    protected static string|\UnitEnum|null $navigationGroup = 'Flock & Eggs';
 
     protected static ?int $navigationSort = 10;
 

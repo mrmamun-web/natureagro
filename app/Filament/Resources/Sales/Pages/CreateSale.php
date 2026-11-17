@@ -15,4 +15,9 @@ class CreateSale extends CreateRecord
     {
         return app(SaleService::class)->create($data);
     }
+
+    protected function getRedirectUrl(): string
+    {
+        return SaleResource::getUrl('view', ['record' => $this->getRecord()]);
+    }
 }
