@@ -1,15 +1,8 @@
-﻿FROM node:22-alpine AS frontend
-
-WORKDIR /app
-
-COPY package.json package-lock.json ./
-RUN npm ci
-
-COPY . .
-RUN npm run build
-
-
-FROM php:8.3-cli-bookworm
+﻿
+# --------------------------------------------------
+# 1. PHP Base Image
+# --------------------------------------------------
+FROM php:8.3-cli-bookworm AS php-base
 
 WORKDIR /var/www/html
 
@@ -38,17 +31,51 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
+# --------------------------------------------------
+# 2. Composer Dependencies
+# --------------------------------------------------
+FROM php-base AS composer-deps
+
 COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 
 COPY . .
-
-COPY --from=frontend /app/public/build ./public/build
 
 RUN COMPOSER_ALLOW_SUPERUSER=1 composer install \
     --no-dev \
     --no-interaction \
     --prefer-dist \
     --optimize-autoloader
+
+# --------------------------------------------------
+# 3. Frontend Build
+# --------------------------------------------------
+FROM node:22-alpine AS frontend
+
+WORKDIR /app
+
+COPY package.json package-lock.json ./
+
+RUN npm ci
+
+COPY . .
+
+# Filament CSS requires Composer vendor dependencies
+COPY --from=composer-deps /var/www/html/vendor ./vendor
+
+RUN npm run build
+
+# --------------------------------------------------
+# 4. Production Runtime
+# --------------------------------------------------
+FROM php-base AS production
+
+WORKDIR /var/www/html
+
+COPY . .
+
+COPY --from=composer-deps /var/www/html/vendor ./vendor
+
+COPY --from=frontend /app/public/build ./public/build
 
 RUN mkdir -p \
     storage/framework/cache \
