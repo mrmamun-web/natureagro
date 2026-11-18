@@ -41,7 +41,7 @@ class IncubationBatchForm
 
                         DatePicker::make('incubated_on')
                             ->label('Incubation Date')
-                            ->default(now()->startOfMonth()->toDateString())
+                            ->default(now()->toDateString())
                             ->maxDate(now())
                             ->native(false)
                             ->live()
@@ -50,12 +50,16 @@ class IncubationBatchForm
                                     return;
                                 }
 
-                                $incubatedOn = Carbon::parse($state)->startOfMonth();
-                                $set('incubated_on', $incubatedOn->toDateString());
+                                $incubatedOn = Carbon::parse($state);
+
                                 $set('incubation_month', $incubatedOn->month);
-                                $set('expected_hatch_on', $incubatedOn->copy()
-                                    ->addDays(IncubationBatch::HATCHING_PERIOD_DAYS)
-                                    ->toDateString());
+
+                                $set(
+                                    'expected_hatch_on',
+                                    $incubatedOn->copy()
+                                        ->addDays(IncubationBatch::HATCHING_PERIOD_DAYS)
+                                        ->toDateString()
+                                );
                             })
                             ->required(),
 
@@ -63,31 +67,20 @@ class IncubationBatchForm
                             ->label('Incubation Month')
                             ->options(IncubationBatch::monthOptions())
                             ->default(now()->month)
-                            ->live()
-                            ->afterStateUpdated(function (?string $state, Get $get, Set $set): void {
-                                if (blank($state)) {
-                                    return;
-                                }
-
-                                $year = filled($get('incubated_on'))
-                                    ? Carbon::parse($get('incubated_on'))->year
-                                    : now()->year;
-                                $incubatedOn = Carbon::createFromDate($year, (int) $state, 1);
-                                $set('incubated_on', $incubatedOn->toDateString());
-                                $set('expected_hatch_on', $incubatedOn->copy()
-                                    ->addDays(IncubationBatch::HATCHING_PERIOD_DAYS)
-                                    ->toDateString());
-                            })
+                            ->disabled()
+                            ->dehydrated()
                             ->rules(['integer', 'between:1,12'])
                             ->required(),
 
                         DatePicker::make('expected_hatch_on')
                             ->label('Expected Hatch Date')
-                            ->default(now()->startOfMonth()->addDays(IncubationBatch::HATCHING_PERIOD_DAYS)->toDateString())
-                            ->minDate(fn (Get $get) => $get('incubated_on'))
+                            ->minDate(fn (Get $get) => $get('incubated_on')
+                                ? Carbon::parse($get('incubated_on'))
+                                    ->addDays(IncubationBatch::HATCHING_PERIOD_DAYS)
+                                    ->toDateString()
+                                : null)
                             ->native(false)
                             ->required(),
-
                     ])
                     ->columns(2),
             ]);
