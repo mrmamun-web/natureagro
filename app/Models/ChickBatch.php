@@ -54,7 +54,7 @@ class ChickBatch extends Model
 
             if (blank($batch->batch_code)) {
                 do {
-                    $code = 'CHB-'.now()->format('Ymd').'-'.Str::upper(Str::random(5));
+                    $code = 'CHB-' . now()->format('Ymd') . '-' . Str::upper(Str::random(5));
                 } while (static::query()->where('batch_code', $code)->exists());
 
                 $batch->batch_code = $code;
@@ -71,7 +71,10 @@ class ChickBatch extends Model
 
     public function sourceIncubationBatch(): BelongsTo
     {
-        return $this->belongsTo(IncubationBatch::class, 'source_incubation_batch_id');
+        return $this->belongsTo(
+            IncubationBatch::class,
+            'source_incubation_batch_id'
+        );
     }
 
     public function movements(): HasMany
@@ -79,8 +82,35 @@ class ChickBatch extends Model
         return $this->hasMany(ChickBatchMovement::class);
     }
 
+    /**
+     * Calculate chick batch age using calendar months.
+     */
     public function getAgeMonthsAttribute(): int
     {
-        return (int) ($this->hatch_date?->diffInMonths(today()) ?? 0);
+        if (! $this->hatch_date) {
+            return 0;
+        }
+
+        $hatchDate = $this->hatch_date->copy()->startOfDay();
+        $currentDate = today();
+
+        if ($currentDate->lt($hatchDate)) {
+            return 0;
+        }
+
+        $months = (
+            ($currentDate->year - $hatchDate->year) * 12
+        ) + ($currentDate->month - $hatchDate->month);
+
+        $anniversaryDay = min(
+            $hatchDate->day,
+            $currentDate->daysInMonth
+        );
+
+        if ($currentDate->day < $anniversaryDay) {
+            $months--;
+        }
+
+        return max(0, $months);
     }
 }

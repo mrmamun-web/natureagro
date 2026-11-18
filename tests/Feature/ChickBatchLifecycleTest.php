@@ -14,6 +14,7 @@ use App\Services\PoultryStockService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Validation\ValidationException;
 use Tests\TestCase;
+use Carbon\Carbon;
 
 class ChickBatchLifecycleTest extends TestCase
 {
@@ -179,6 +180,71 @@ class ChickBatchLifecycleTest extends TestCase
             'movement_type' => 'transfer_in',
         ]);
     }
+
+
+public function test_chick_batch_age_is_zero_on_hatch_date(): void
+{
+    $this->travelTo(Carbon::parse('2026-01-31'));
+
+    $batch = $this->createAgeBatch('2026-01-31');
+
+    $this->assertSame(0, $batch->age_months);
+
+    $this->travelBack();
+}
+
+public function test_chick_batch_age_increases_on_first_month_anniversary(): void
+{
+    $this->travelTo(Carbon::parse('2026-02-28'));
+
+    $batch = $this->createAgeBatch('2026-01-28');
+
+    $this->assertSame(1, $batch->age_months);
+
+    $this->travelBack();
+}
+
+public function test_chick_batch_age_increases_on_second_month_anniversary(): void
+{
+    $this->travelTo(Carbon::parse('2026-03-31'));
+
+    $batch = $this->createAgeBatch('2026-01-31');
+
+    $this->assertSame(2, $batch->age_months);
+
+    $this->travelBack();
+}
+
+public function test_chick_batch_age_handles_month_end_without_manual_update(): void
+{
+    $this->travelTo(Carbon::parse('2026-02-27'));
+
+    $batch = $this->createAgeBatch('2026-01-31');
+
+    $this->assertSame(0, $batch->age_months);
+
+    $this->travelTo(Carbon::parse('2026-02-28'));
+
+    $this->assertSame(1, $batch->fresh()->age_months);
+
+    $this->assertSame(
+    '2026-01-31',
+    $batch->fresh()->hatch_date->toDateString()
+);
+
+    $this->travelBack();
+}
+
+private function createAgeBatch(string $hatchDate): ChickBatch
+{
+    return ChickBatch::query()->create([
+        'name' => 'Age calculation test batch',
+        'source' => ChickBatch::SOURCE_PURCHASED,
+        'hatch_date' => $hatchDate,
+        'initial_quantity' => 10,
+    ]);
+}
+
 
     private function createBatch(string $name, int $quantity): ChickBatch
     {

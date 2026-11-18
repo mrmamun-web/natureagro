@@ -27,6 +27,7 @@ class ParentFlockOperationsTest extends TestCase
             'initial_male_quantity' => 8,
             'initial_female_quantity' => 42,
         ]);
+
         $this->valueFlock($flock);
 
         Livewire::test(CreateFlockDailyRecord::class)
@@ -70,6 +71,7 @@ class ParentFlockOperationsTest extends TestCase
             'initial_male_quantity' => 2,
             'initial_female_quantity' => 6,
         ]);
+
         $this->valueFlock($flock);
 
         Livewire::test(CreateFlockDailyRecord::class)
@@ -84,7 +86,7 @@ class ParentFlockOperationsTest extends TestCase
                 'health_status' => ParentFlock::HEALTHY,
             ])
             ->call('create')
-            ->assertHasFormErrors(['data.male_mortality']);
+            ->assertHasFormErrors(['male_mortality']);
 
         $this->assertDatabaseHas('parent_flocks', [
             'id' => $flock->id,
@@ -98,7 +100,27 @@ class ParentFlockOperationsTest extends TestCase
     private function valueFlock(ParentFlock $flock): void
     {
         $costs = app(InventoryCostService::class);
-        $costs->receive('parent_flock', $flock->id, 'male', $flock->current_male_quantity, $flock->current_male_quantity, today()->toDateString(), 'purchase', $flock);
-        $costs->receive('parent_flock', $flock->id, 'female', $flock->current_female_quantity, $flock->current_female_quantity, today()->toDateString(), 'purchase', $flock);
+
+        $costs->receive(
+            'parent_flock',
+            $flock->id,
+            'male',
+            $flock->current_male_quantity,
+            $flock->current_male_quantity,
+            today()->toDateString(),
+            'purchase',
+            $flock
+        );
+
+        $costs->receive(
+            'parent_flock',
+            $flock->id,
+            'female',
+            $flock->current_female_quantity,
+            $flock->current_female_quantity,
+            today()->toDateString(),
+            'purchase',
+            $flock
+        );
     }
 }

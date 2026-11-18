@@ -52,7 +52,7 @@ class AdminAuthenticationTest extends TestCase
                 'password' => 'WrongPassword123!',
             ])
             ->call('authenticate')
-            ->assertHasFormErrors(['data.email']);
+            ->assertHasFormErrors(['email']);
 
         $this->assertGuest();
     }
@@ -71,7 +71,7 @@ class AdminAuthenticationTest extends TestCase
                 'password' => 'StrongPassword123!',
             ])
             ->call('authenticate')
-            ->assertHasFormErrors(['data.email']);
+            ->assertHasFormErrors(['email']);
 
         $this->assertGuest();
     }
