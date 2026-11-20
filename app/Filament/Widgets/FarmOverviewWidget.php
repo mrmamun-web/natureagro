@@ -51,6 +51,7 @@ class FarmOverviewWidget extends Widget
             'henStock' => $henStock,
             'roosterStock' => $roosterStock,
             'eggsToday' => (int) FlockDailyRecord::query()->whereDate('recorded_on', $today)->sum('eggs_collected'),
+            'currentEggStock' => (int) \App\Models\EggStock::query()->sum('good_available'),
             'eggsThisMonth' => (int) FlockDailyRecord::query()
                 ->whereDate('recorded_on', '>=', $monthStart)
                 ->whereDate('recorded_on', '<=', $monthEnd)
