@@ -10,6 +10,10 @@ class FarmTransaction extends Model
 {
     public const TYPE_INCOME = 'income';
 
+    public const EXPENSE_FEED = "feed";
+
+    public const EXPENSE_MEDICINE = "medicine";
+
     public const TYPE_EXPENSE = 'expense';
 
     public const INCOME_OTHER = 'other_income';

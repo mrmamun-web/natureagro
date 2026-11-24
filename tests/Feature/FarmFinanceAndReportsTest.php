@@ -251,13 +251,13 @@ class FarmFinanceAndReportsTest extends TestCase
             'usage_type' => 'feed_consumption',
         ]);
 
-        Livewire::test(FarmReports::class)
+                Livewire::test(FarmReports::class)
             ->set('requestedStartDate', '2026-03-01')
             ->set('requestedEndDate', '2026-03-31')
             ->call('applyFilters')
-            ->assertSee('Feed purchased')
+            ->assertSee('Feed expense')
             ->assertSee('৳ 100.00')
-            ->assertSee('Medicine purchased')
+            ->assertSee('Medicine expense')
             ->assertSee('৳ 50.00')
             ->assertSee('৳ -150.00');
     }

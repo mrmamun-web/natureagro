@@ -25,11 +25,9 @@ class SupplyProductResource extends Resource
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedBeaker;
 
-    protected static ?string $navigationLabel = 'Feed & Medicine Setup';
 
-    protected static string|\UnitEnum|null $navigationGroup = 'Feed & Expenses';
+    protected static bool $shouldRegisterNavigation = false;
 
-    protected static ?int $navigationSort = 31;
 
     public static function form(Schema $schema): Schema
     {

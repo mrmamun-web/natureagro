@@ -141,84 +141,98 @@ class FarmOverviewWidgetTest extends TestCase
             ->assertSee('Record a sale');
     }
 
-    public function test_dashboard_displays_monthly_feed_and_medicine_purchase_totals(): void
-    {
-        $flock = ParentFlock::query()->create([
-            'name' => 'Healthcare dashboard flock',
-            'initial_male_quantity' => 2,
-            'initial_female_quantity' => 10,
-        ]);
-        $feed = SupplyProduct::query()->create([
-            'name' => 'Layer feed',
-            'type' => SupplyProduct::TYPE_FEED,
-            'unit' => 'kg',
-            'minimum_stock' => 5,
-        ]);
-        $medicine = SupplyProduct::query()->create([
-            'name' => 'Vaccine',
-            'type' => SupplyProduct::TYPE_MEDICINE,
-            'unit' => 'vial',
-            'minimum_stock' => 2,
-        ]);
-        $supplier = Supplier::query()->create(['name' => 'Monthly supplier']);
 
-        SupplyUsage::query()->create([
-            'supply_product_id' => $feed->id,
-            'parent_flock_id' => $flock->id,
-            'used_on' => today(),
-            'quantity' => 3,
-            'total_cost' => 80,
-            'usage_type' => 'feed_consumption',
-        ]);
-        SupplyUsage::query()->create([
-            'supply_product_id' => $medicine->id,
-            'parent_flock_id' => $flock->id,
-            'used_on' => today(),
-            'quantity' => 1,
-            'total_cost' => 15,
-            'usage_type' => 'vaccination',
-            'dosage' => '1 dose',
-            'next_dose_on' => today()->addDays(3),
-        ]);
-        SupplyPurchase::query()->create([
-            'supplier_id' => $supplier->id,
-            'supply_product_id' => $feed->id,
-            'purchased_on' => today(),
-            'quantity' => 10,
-            'unit_cost' => 20,
-            'total_amount' => 200,
-            'paid_amount' => 200,
-            'due_amount' => 0,
-            'payment_status' => SupplyPurchase::PAYMENT_PAID,
-        ]);
-        SupplyPurchase::query()->create([
-            'supplier_id' => $supplier->id,
-            'supply_product_id' => $medicine->id,
-            'purchased_on' => today(),
-            'quantity' => 2,
-            'unit_cost' => 15,
-            'total_amount' => 30,
-            'paid_amount' => 30,
-            'due_amount' => 0,
-            'payment_status' => SupplyPurchase::PAYMENT_PAID,
-        ]);
-        SupplyPurchase::query()->create([
-            'supplier_id' => $supplier->id,
-            'supply_product_id' => $feed->id,
-            'purchased_on' => today()->subMonth(),
-            'quantity' => 20,
-            'unit_cost' => 10,
-            'total_amount' => 200,
-            'paid_amount' => 200,
-            'due_amount' => 0,
-            'payment_status' => SupplyPurchase::PAYMENT_PAID,
-        ]);
+public function test_dashboard_hides_feed_and_medicine_purchases_from_financial_overview(): void
+{
+    $flock = ParentFlock::query()->create([
+        'name' => 'Healthcare dashboard flock',
+        'initial_male_quantity' => 2,
+        'initial_female_quantity' => 10,
+    ]);
 
-        Livewire::test(FarmOverviewWidget::class)
-            ->assertSee('Feed purchases')
-            ->assertSee('৳ 200.00')
-            ->assertSee('Medicine purchases')
-            ->assertSee('৳ 30.00')
-            ->assertDontSee('Upcoming vaccinations');
-    }
+    $feed = SupplyProduct::query()->create([
+        'name' => 'Layer feed',
+        'type' => SupplyProduct::TYPE_FEED,
+        'unit' => 'kg',
+        'minimum_stock' => 5,
+    ]);
+
+    $medicine = SupplyProduct::query()->create([
+        'name' => 'Vaccine',
+        'type' => SupplyProduct::TYPE_MEDICINE,
+        'unit' => 'vial',
+        'minimum_stock' => 2,
+    ]);
+
+    $supplier = Supplier::query()->create([
+        'name' => 'Monthly supplier',
+    ]);
+
+    SupplyUsage::query()->create([
+        'supply_product_id' => $feed->id,
+        'parent_flock_id' => $flock->id,
+        'used_on' => today(),
+        'quantity' => 3,
+        'total_cost' => 80,
+        'usage_type' => 'feed_consumption',
+    ]);
+
+    SupplyUsage::query()->create([
+        'supply_product_id' => $medicine->id,
+        'parent_flock_id' => $flock->id,
+        'used_on' => today(),
+        'quantity' => 1,
+        'total_cost' => 15,
+        'usage_type' => 'vaccination',
+        'dosage' => '1 dose',
+        'next_dose_on' => today()->addDays(3),
+    ]);
+
+    SupplyPurchase::query()->create([
+        'supplier_id' => $supplier->id,
+        'supply_product_id' => $feed->id,
+        'purchased_on' => today(),
+        'quantity' => 10,
+        'unit_cost' => 20,
+        'total_amount' => 200,
+        'paid_amount' => 200,
+        'due_amount' => 0,
+        'payment_status' => SupplyPurchase::PAYMENT_PAID,
+    ]);
+
+    SupplyPurchase::query()->create([
+        'supplier_id' => $supplier->id,
+        'supply_product_id' => $medicine->id,
+        'purchased_on' => today(),
+        'quantity' => 2,
+        'unit_cost' => 15,
+        'total_amount' => 30,
+        'paid_amount' => 30,
+        'due_amount' => 0,
+        'payment_status' => SupplyPurchase::PAYMENT_PAID,
+    ]);
+
+    SupplyPurchase::query()->create([
+        'supplier_id' => $supplier->id,
+        'supply_product_id' => $feed->id,
+        'purchased_on' => today()->subMonth(),
+        'quantity' => 20,
+        'unit_cost' => 10,
+        'total_amount' => 200,
+        'paid_amount' => 200,
+        'due_amount' => 0,
+        'payment_status' => SupplyPurchase::PAYMENT_PAID,
+    ]);
+
+    Livewire::test(FarmOverviewWidget::class)
+        ->assertDontSee('Feed purchases')
+        ->assertDontSee('Medicine purchases')
+        ->assertDontSee('Purchased feed this month')
+        ->assertDontSee('Purchased medicine this month')
+        ->assertSee('Other expenses')
+        ->assertSee('Total expenses')
+        ->assertSee('Net profit')
+        ->assertSee('0.00')
+        ->assertDontSee('Upcoming vaccinations');
 }
+};

@@ -14,18 +14,29 @@ use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
 
 class FarmTransactionResource extends Resource
 {
     protected static ?string $model = FarmTransaction::class;
 
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedBanknotes;
+    protected static string|BackedEnum|null $navigationIcon =
+        Heroicon::OutlinedBanknotes;
 
     protected static ?string $navigationLabel = 'Other Expenses';
 
     protected static string|\UnitEnum|null $navigationGroup = 'Feed & Expenses';
 
     protected static ?int $navigationSort = 20;
+
+    public static function getEloquentQuery(): Builder
+    {
+        return parent::getEloquentQuery()
+            ->whereNotIn('category', [
+                FarmTransaction::EXPENSE_FEED,
+                FarmTransaction::EXPENSE_MEDICINE,
+            ]);
+    }
 
     public static function form(Schema $schema): Schema
     {

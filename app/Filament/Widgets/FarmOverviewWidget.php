@@ -10,8 +10,6 @@ use App\Models\FlockDailyRecord;
 use App\Models\IncubationBatch;
 use App\Models\ParentFlock;
 use App\Models\Sale;
-use App\Models\SupplyProduct;
-use App\Models\SupplyPurchase;
 use Filament\Widgets\Widget;
 
 class FarmOverviewWidget extends Widget
@@ -88,27 +86,8 @@ class FarmOverviewWidget extends Widget
             ->whereDate('transaction_on', '<=', $monthEnd)
             ->sum('amount');
 
-        // Monthly supply purchases
-        $supplyPurchases = SupplyPurchase::query()
-            ->whereDate('purchased_on', '>=', $monthStart)
-            ->whereDate('purchased_on', '<=', $monthEnd);
-
-        $feedCostsThisMonth = (float) (clone $supplyPurchases)
-            ->whereHas('product', fn ($query) =>
-                $query->where('type', SupplyProduct::TYPE_FEED)
-            )
-            ->sum('total_amount');
-
-        $medicineCostsThisMonth = (float) (clone $supplyPurchases)
-            ->whereHas('product', fn ($query) =>
-                $query->where('type', SupplyProduct::TYPE_MEDICINE)
-            )
-            ->sum('total_amount');
-
-        $totalExpensesThisMonth =
-            $feedCostsThisMonth +
-            $medicineCostsThisMonth +
-            $otherExpensesThisMonth;
+        // Dashboard expenses exclude feed and medicine purchases
+        $totalExpensesThisMonth = $otherExpensesThisMonth;
 
         // Last 8 months analytics
         $monthlyAnalytics = collect(range(7, 0))
@@ -128,38 +107,18 @@ class FarmOverviewWidget extends Widget
                     ->whereDate('sold_on', '<=', $endDate)
                     ->sum('total_amount');
 
-                // Other expenses
+                // Other expenses only
                 $otherExpenses = (float) FarmTransaction::query()
                     ->where('transaction_type', FarmTransaction::TYPE_EXPENSE)
                     ->whereDate('transaction_on', '>=', $startDate)
                     ->whereDate('transaction_on', '<=', $endDate)
                     ->sum('amount');
 
-                // Feed expenses
-                $feedExpenses = (float) SupplyPurchase::query()
-                    ->whereDate('purchased_on', '>=', $startDate)
-                    ->whereDate('purchased_on', '<=', $endDate)
-                    ->whereHas('product', fn ($query) =>
-                        $query->where('type', SupplyProduct::TYPE_FEED)
-                    )
-                    ->sum('total_amount');
-
-                // Medicine expenses
-                $medicineExpenses = (float) SupplyPurchase::query()
-                    ->whereDate('purchased_on', '>=', $startDate)
-                    ->whereDate('purchased_on', '<=', $endDate)
-                    ->whereHas('product', fn ($query) =>
-                        $query->where('type', SupplyProduct::TYPE_MEDICINE)
-                    )
-                    ->sum('total_amount');
-
                 return [
                     'label' => $start->format('M'),
                     'year' => $start->format('Y'),
                     'revenue' => $revenue,
-                    'expenses' => $otherExpenses
-                        + $feedExpenses
-                        + $medicineExpenses,
+                    'expenses' => $otherExpenses,
                 ];
             })
             ->values();
@@ -234,9 +193,6 @@ class FarmOverviewWidget extends Widget
             'birdsSoldThisMonth' => $birdsSoldThisMonth,
 
             'otherExpensesThisMonth' => $otherExpensesThisMonth,
-            'feedCostsThisMonth' => $feedCostsThisMonth,
-            'medicineCostsThisMonth' => $medicineCostsThisMonth,
-
             'totalExpensesThisMonth' => $totalExpensesThisMonth,
 
             'netProfitThisMonth' =>

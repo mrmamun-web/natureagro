@@ -149,6 +149,7 @@ class SupplyInventoryService
 
             $paid = round((float) $lockedPurchase->paid_amount + $amount, 2);
             $total = (float) $lockedPurchase->total_amount;
+
             $lockedPurchase->update([
                 'paid_amount' => $this->money($paid),
                 'due_amount' => $this->money($total - $paid),
@@ -162,6 +163,7 @@ class SupplyInventoryService
     public function recordUsage(array $data): SupplyUsage
     {
         $sourceType = $data['source_type'] ?? null;
+
         $data = $this->validate($data, [
             'supply_product_id' => ['required', 'integer', 'exists:supply_products,id'],
             'source_type' => ['required', Rule::in(['parent_flock', 'chick_batch'])],
@@ -179,11 +181,13 @@ class SupplyInventoryService
 
         return DB::transaction(function () use ($data, $sourceType): SupplyUsage {
             $product = SupplyProduct::query()->lockForUpdate()->findOrFail($data['supply_product_id']);
+
             if (! $product->is_active || ! in_array($product->type, [SupplyProduct::TYPE_FEED, SupplyProduct::TYPE_MEDICINE], true)) {
                 $this->fail('supply_product_id', 'Select an active feed or medicine product.');
             }
 
             $usageType = $data['usage_type'] ?? ($product->type === SupplyProduct::TYPE_FEED ? 'feed_consumption' : 'treatment');
+
             if (($product->type === SupplyProduct::TYPE_FEED && $usageType !== 'feed_consumption')
                 || ($product->type === SupplyProduct::TYPE_MEDICINE && $usageType === 'feed_consumption')) {
                 $this->fail('usage_type', 'Select a usage type that matches the selected inventory product.');
@@ -198,16 +202,20 @@ class SupplyInventoryService
             }
 
             $sourceId = $sourceType === 'parent_flock' ? $data['parent_flock_id'] : $data['chick_batch_id'];
+
             if ($sourceType === 'parent_flock') {
                 $source = ParentFlock::query()->lockForUpdate()->findOrFail($sourceId);
+
                 if ($source->status !== ParentFlock::STATUS_ACTIVE) {
                     $this->fail('parent_flock_id', 'Select an active parent flock.');
                 }
             } else {
                 $source = ChickBatch::query()->lockForUpdate()->findOrFail($sourceId);
+
                 if ($source->status !== ChickBatch::STATUS_ACTIVE) {
                     $this->fail('chick_batch_id', 'Select an active chick batch.');
                 }
+
                 if ($source->current_quantity < 1) {
                     $this->fail('chick_batch_id', 'Production costs can only be assigned to a batch with live birds.');
                 }
@@ -216,6 +224,7 @@ class SupplyInventoryService
             if ($sourceType === 'parent_flock' && $source->current_female_quantity < 1) {
                 $this->fail('parent_flock_id', 'Flock production costs require at least one live female bird.');
             }
+
             if ($sourceType === 'parent_flock' && FlockDailyRecord::query()
                 ->where('parent_flock_id', $source->id)
                 ->whereDate('recorded_on', '>=', $data['used_on'])
@@ -223,18 +232,25 @@ class SupplyInventoryService
                 $this->fail('used_on', 'Record flock feed and medicine costs before the daily egg collection on that date.');
             }
 
-            $remainingMilli = $this->quantityMilli($data['quantity'], 'quantity');
-            $requestedMilli = $remainingMilli;
+            $requestedMilli = $this->quantityMilli($data['quantity'], 'quantity');
+            $remainingMilli = $requestedMilli;
+
             $query = SupplyLot::query()
                 ->where('supply_product_id', $product->id)
-                ->where('received_on', '<=', $data['used_on'])
+                ->whereDate('received_on', '<=', $data['used_on'])
                 ->where('remaining_quantity', '>', 0);
 
             if ($product->type === SupplyProduct::TYPE_MEDICINE) {
-                $query->whereNotNull('expires_on')->whereDate('expires_on', '>=', $data['used_on']);
+                $query->whereNotNull('expires_on')
+                    ->whereDate('expires_on', '>=', $data['used_on']);
             }
 
-            $lots = $query->orderBy('received_on')->orderBy('id')->lockForUpdate()->get();
+            $lots = $query
+                ->orderBy('received_on')
+                ->orderBy('id')
+                ->lockForUpdate()
+                ->get();
+
             foreach ($lots as $lot) {
                 if ($remainingMilli <= 0) {
                     break;
@@ -254,6 +270,7 @@ class SupplyInventoryService
             $allocations = [];
             $leftToAllocate = $requestedMilli;
             $totalCost = 0.0;
+
             foreach ($lots as $lot) {
                 if ($leftToAllocate <= 0) {
                     break;
@@ -261,6 +278,7 @@ class SupplyInventoryService
 
                 $availableMilli = $this->quantityMilli($lot->remaining_quantity, 'quantity');
                 $allocatedMilli = min($leftToAllocate, $availableMilli);
+
                 if ($allocatedMilli <= 0) {
                     continue;
                 }
@@ -268,6 +286,7 @@ class SupplyInventoryService
                 $quantity = $allocatedMilli / 1000;
                 $unitCost = (float) $lot->unit_cost;
                 $lineCost = round($quantity * $unitCost, 2);
+
                 $allocations[] = [$lot, $allocatedMilli, $unitCost, $lineCost];
                 $leftToAllocate -= $allocatedMilli;
                 $totalCost = round($totalCost + $lineCost, 2);
@@ -289,6 +308,7 @@ class SupplyInventoryService
             ]);
 
             $costService = app(InventoryCostService::class);
+
             if ($sourceType === 'parent_flock') {
                 $costService->addEggProductionCost($source->id, $totalCost, $data['used_on'], $usage);
             } else {
@@ -305,6 +325,7 @@ class SupplyInventoryService
 
             foreach ($allocations as [$lot, $allocatedMilli, $unitCost, $lineCost]) {
                 $lot->decrement('remaining_quantity', $this->quantity($allocatedMilli));
+
                 SupplyUsageLot::query()->create([
                     'supply_usage_id' => $usage->id,
                     'supply_lot_id' => $lot->id,
@@ -338,6 +359,7 @@ class SupplyInventoryService
         }
 
         $scaled = (float) $value * 1000;
+
         if (abs($scaled - round($scaled)) > 0.00001) {
             $this->fail($field, 'Quantity may have no more than three decimal places.');
         }
@@ -379,6 +401,7 @@ class SupplyInventoryService
             return Validator::make($data, $rules)->validate();
         } catch (ValidationException $exception) {
             $errors = [];
+
             foreach ($exception->errors() as $field => $messages) {
                 $errors['data.'.$field] = $messages;
             }

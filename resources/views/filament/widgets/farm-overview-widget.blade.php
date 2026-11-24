@@ -6,7 +6,7 @@
 
         $productionStats = [
             [
-                'label' => 'Parent Birds',
+                'label' => 'Parent birds',
                 'value' => $totalParentBirds,
                 'hint' => number_format($henStock) . ' hens · ' . number_format($roosterStock) . ' roosters',
                 'icon' => '🐔',
@@ -27,14 +27,14 @@
                 'color' => 'blue',
             ],
             [
-                'label' => 'Eggs Collected Today',
+                'label' => 'Eggs collected today',
                 'value' => $eggsToday,
                 'hint' => number_format($eggsThisMonth) . ' collected this month',
                 'icon' => '📦',
                 'color' => 'green',
             ],
             [
-                'label' => 'Chicks Hatched This Month',
+                'label' => 'Chicks hatched this month',
                 'value' => $hatchedThisMonth,
                 'hint' => number_format($liveChicks) . ' live chicks · ' . number_format($activeChickBatches) . ' batches',
                 'icon' => '🐤',
@@ -42,31 +42,37 @@
             ],
         ];
 
-        $financeStats = [
-            [
-                'label' => 'Total Sales',
-                'value' => $currencySymbol . ' ' . number_format($salesRevenueThisMonth, 2),
-                'hint' => number_format($eggsSoldThisMonth) . ' eggs · ' . number_format($birdsSoldThisMonth) . ' chicks sold',
-                'icon' => '💰',
-                'color' => 'green',
-            ],
-            [
-                'label' => 'Total Expenses',
-                'value' => $currencySymbol . ' ' . number_format($totalExpensesThisMonth, 2),
-                'hint' => 'Feed ' . $currencySymbol . ' ' . number_format($feedCostsThisMonth, 2) .
-                    ' · Medicine ' . $currencySymbol . ' ' . number_format($medicineCostsThisMonth, 2) .
-                    ' · Other ' . $currencySymbol . ' ' . number_format($otherExpensesThisMonth, 2),
-                'icon' => '💸',
-                'color' => 'amber',
-            ],
-            [
-                'label' => 'Net Profit',
-                'value' => $currencySymbol . ' ' . number_format($netProfitThisMonth, 2),
-                'hint' => 'Sales minus recorded expenses',
-                'icon' => '📈',
-                'color' => $netProfitThisMonth >= 0 ? 'green' : 'red',
-            ],
-        ];
+
+           $financeStats = [
+    [
+        'label' => 'Total sales',
+        'value' => $currencySymbol . ' ' . number_format($salesRevenueThisMonth, 2),
+        'hint' => number_format($eggsSoldThisMonth) . ' eggs · ' . number_format($birdsSoldThisMonth) . ' batch chickens sold',
+        'icon' => '💰',
+        'color' => 'green',
+    ],
+    [
+        'label' => 'Other expenses',
+        'value' => $currencySymbol . ' ' . number_format($otherExpensesThisMonth, 2),
+        'hint' => 'Other recorded farm expenses this month',
+        'icon' => '🧾',
+        'color' => 'amber',
+    ],
+    [
+        'label' => 'Total expenses',
+        'value' => $currencySymbol . ' ' . number_format($totalExpensesThisMonth, 2),
+        'hint' => 'Other recorded farm expenses only',
+        'icon' => '💸',
+        'color' => 'amber',
+    ],
+    [
+        'label' => 'Net profit',
+        'value' => $currencySymbol . ' ' . number_format($netProfitThisMonth, 2),
+        'hint' => 'Sales minus other recorded expenses',
+        'icon' => '📈',
+        'color' => $netProfitThisMonth >= 0 ? 'green' : 'red',
+    ],
+];
     @endphp
 
     <div class="farm-overview space-y-6">
@@ -272,7 +278,7 @@
                             <circle cx="18" cy="21" r="1"></circle>
                         </svg>
                     </span>
-                    <span class="farm-action-label">Record Sale</span>
+                    <span class="farm-action-label">Record a sale</span>
                     <span class="farm-action-arrow">→</span>
                 </a>
 
@@ -620,7 +626,7 @@
                 <span>🐔</span>
 
                 <div>
-                    <strong>No Active Parent Flocks</strong>
+                    <strong>No active parent flocks yet</strong>
                     <p>
                         Add your first parent flock to start tracking
                         livestock and farm production.

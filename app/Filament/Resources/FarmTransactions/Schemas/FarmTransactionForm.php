@@ -17,39 +17,50 @@ class FarmTransactionForm
     {
         return $schema
             ->components([
-                Section::make('Other expense')
-                    ->description('Record costs that are not feed, medicine, or sales.')
+
+                Section::make('Other Expense')
+                    ->description(
+                        'Record labour, utilities, transportation, maintenance and other farm expenses.'
+                    )
                     ->columns(2)
                     ->schema([
+
                         Hidden::make('transaction_type')
                             ->default(FarmTransaction::TYPE_EXPENSE)
                             ->required(),
 
                         Select::make('category')
-                            ->label('Category')
+                            ->label('Expense Category')
                             ->options([
+
                                 FarmTransaction::EXPENSE_LABOUR => 'Labour',
+
                                 FarmTransaction::EXPENSE_ELECTRICITY => 'Electricity',
+
                                 FarmTransaction::EXPENSE_TRANSPORT => 'Transportation',
+
                                 FarmTransaction::EXPENSE_MAINTENANCE => 'Maintenance',
+
                                 FarmTransaction::EXPENSE_MISCELLANEOUS => 'Miscellaneous',
+
                             ])
                             ->default(FarmTransaction::EXPENSE_MISCELLANEOUS)
+                            ->native(false)
                             ->required(),
 
                         TextInput::make('amount')
-                            ->label('Amount (৳)')
+                            ->label('Amount')
                             ->numeric()
                             ->minValue(0.01)
                             ->maxValue(9999999999.99)
                             ->step(0.01)
-                            ->prefix('৳')
+                            ->prefix('BDT')
                             ->required(),
 
                         DatePicker::make('transaction_on')
                             ->label('Date')
-                            ->default(now()->toDateString())
-                            ->maxDate(now())
+                            ->default(today())
+                            ->maxDate(today())
                             ->native(false)
                             ->required(),
 
@@ -72,7 +83,9 @@ class FarmTransactionForm
                             ->label('Notes')
                             ->rows(3)
                             ->columnSpanFull(),
+
                     ]),
+
             ]);
     }
 }
