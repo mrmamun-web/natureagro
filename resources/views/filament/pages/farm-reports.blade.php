@@ -144,12 +144,6 @@
                     'Sales revenue minus feed, medicine and other recorded expenses',
                     'heroicon-o-scale',
                 ],
-                [
-                    'Supplier payables',
-                    '৳ '.number_format($supplierDues, 2),
-                    'Current outstanding balance across inventory purchases',
-                    'heroicon-o-truck',
-                ],
             ];
         @endphp
 
@@ -192,8 +186,7 @@
             <p class="text-xs leading-5 text-gray-500 dark:text-gray-400">
                 Feed and medicine expenses are recorded directly as expense transactions.
                 Net profit or loss is calculated from sales revenue minus feed expenses,
-                medicine expenses and other recorded expenses. Supplier payables are shown
-                separately and are not added again to this calculation.
+                medicine expenses and other recorded expenses.
             </p>
         </div>
     </div>

@@ -123,23 +123,15 @@ class FarmReports extends Page
 
 $salesRevenue = (float) $sales()->sum('total_amount');
 
-// Feed expenses from supply purchases
-$feedCost = (float) SupplyPurchase::query()
-    ->whereDate('purchased_on', '>=', $dates['startDate'])
-    ->whereDate('purchased_on', '<=', $dates['endDate'])
-    ->whereHas('product', fn ($query) =>
-        $query->where('type', SupplyProduct::TYPE_FEED)
-    )
-    ->sum('total_amount');
+// Feed expenses from dashboard purchase transactions
+$feedCost = (float) $expenseTransactions()
+    ->where('category', FarmTransaction::EXPENSE_FEED)
+    ->sum('amount');
 
-// Medicine expenses from supply purchases
-$medicineCost = (float) SupplyPurchase::query()
-    ->whereDate('purchased_on', '>=', $dates['startDate'])
-    ->whereDate('purchased_on', '<=', $dates['endDate'])
-    ->whereHas('product', fn ($query) =>
-        $query->where('type', SupplyProduct::TYPE_MEDICINE)
-    )
-    ->sum('total_amount');
+// Medicine expenses from dashboard purchase transactions
+$medicineCost = (float) $expenseTransactions()
+    ->where('category', FarmTransaction::EXPENSE_MEDICINE)
+    ->sum('amount');
 
 // Other income
 $otherIncome = (float) $transactions()
@@ -222,9 +214,7 @@ $netProfit = round(
 
             'medicineCost' => $medicineCost,
 
-            // Existing supplier records are retained for outstanding dues.
-            'supplierDues' => (float) SupplyPurchase::query()
-                ->sum('due_amount'),
+
         ];
     }
 
@@ -380,11 +370,6 @@ $netProfit = round(
                 $report['medicineCost'],
             ],
 
-            [
-                'Suppliers',
-                'Current outstanding payable (BDT)',
-                $report['supplierDues'],
-            ],
 
             [
                 'Other transactions',

@@ -61,6 +61,13 @@ class SafeRecordDeletionService
                     ->lockForUpdate()
                     ->findOrFail($record->getKey());
 
+                if ($lockedRecord instanceof ParentFlock) {
+                    app(ParentFlockDeletionService::class)
+                        ->deleteWithinTransaction($lockedRecord);
+
+                    return;
+                }
+
                 if ($lockedRecord instanceof FlockDailyRecord) {
                     $this->deleteLaterEggDependents($lockedRecord);
                 }
