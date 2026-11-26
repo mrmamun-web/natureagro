@@ -51,7 +51,7 @@ class ChickBatchesTable
 
                 TextColumn::make('age_months')
                     ->label('Age')
-                    ->formatStateUsing(fn (int $state): string => $state.' mo.'),
+                    ->formatStateUsing(fn (int $state, ChickBatch $record): string => $state . ' ' . ($state === 1 ? 'Month' : 'Months') . ' ' . $record->age_days . ' ' . ($record->age_days === 1 ? 'Day' : 'Days')),
 
                 TextColumn::make('current_quantity')
                     ->label('Alive now')

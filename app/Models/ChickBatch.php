@@ -113,4 +113,25 @@ class ChickBatch extends Model
 
         return max(0, $months);
     }
+
+    public function getAgeDaysAttribute(): int
+    {
+        if (! $this->hatch_date) {
+            return 0;
+        }
+
+        $hatchDate = $this->hatch_date->copy()->startOfDay();
+        $currentDate = today();
+
+        if ($currentDate->lt($hatchDate)) {
+            return 0;
+        }
+
+        $completedMonths = $this->age_months;
+
+        $lastAnniversary = $hatchDate->copy()
+            ->addMonthsNoOverflow($completedMonths);
+
+        return (int) $lastAnniversary->diffInDays($currentDate);
+    }
 }

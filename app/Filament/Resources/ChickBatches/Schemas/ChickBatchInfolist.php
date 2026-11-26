@@ -36,7 +36,9 @@ class ChickBatchInfolist
                                 ->where('movement_type', ChickBatchMovement::TYPE_MORTALITY)
                                 ->sum('quantity')),
                         TextEntry::make('current_quantity')->label('Chicks Alive Now')->numeric(),
-                        TextEntry::make('age_months')->label('Age')->suffix(' months'),
+                        TextEntry::make('age_months')
+                            ->label('Age')
+                            ->state(fn (ChickBatch $record): string => $record->age_months . ' ' . ($record->age_months === 1 ? 'Month' : 'Months') . ' ' . $record->age_days . ' ' . ($record->age_days === 1 ? 'Day' : 'Days')),
                         TextEntry::make('status')->label('Status')->badge(),
                         TextEntry::make('notes')->label('Notes')->placeholder('No additional notes')->columnSpanFull(),
                     ]),
